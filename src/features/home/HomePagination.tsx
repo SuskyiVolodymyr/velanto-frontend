@@ -3,7 +3,7 @@
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-} from "@/shared/components/icons";
+} from "@/shared/ui/icons";
 import { useTranslations } from "next-intl";
 import { cn } from "@/shared/utils/cn";
 import { buildPaginationRange } from "@/features/home/pagination-range";

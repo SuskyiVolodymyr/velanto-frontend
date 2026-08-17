@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/shared/contexts/auth-context";
 import { UserAvatar } from "@/shared/components/UserAvatar";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { Hidden } from "@/shared/components/Hidden";
 
 interface Row {

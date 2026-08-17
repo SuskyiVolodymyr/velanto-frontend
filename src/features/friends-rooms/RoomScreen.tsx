@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2, WifiOff } from "lucide-react";
-import { Button } from "@/shared/components/Button";
-import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/ui/Button";
+import { Text } from "@/shared/ui/Text";
 import { pageContainer } from "@/shared/constants/page-container";
 import { cn } from "@/shared/utils/cn";
 import { useFriendsRoom } from "./use-friends-room";

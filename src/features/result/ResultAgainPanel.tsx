@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Upload } from "lucide-react";
-import { Text } from "@/shared/components/Text";
-import { buttonClassName } from "@/shared/components/Button";
+import { Text } from "@/shared/ui/Text";
+import { buttonClassName } from "@/shared/ui/Button";
 import { ShareButton } from "@/features/share/ShareButton";
 import { cn } from "@/shared/utils/cn";
 import { readLastPlayId } from "@/shared/utils/last-play-storage";

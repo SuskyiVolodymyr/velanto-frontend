@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import type { TopPackToday } from "@/shared/types/admin";
 
 /** The overview's "top packs today" ranked list. */

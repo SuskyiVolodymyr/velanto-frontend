@@ -10,10 +10,10 @@ import type {
   FeedbackStatus,
   FeedbackTopic,
 } from "@/shared/types/feedback";
-import { Text } from "@/shared/components/Text";
-import { Button } from "@/shared/components/Button";
-import { PageHeader } from "@/shared/components/PageHeader";
-import { PlusIcon } from "@/shared/components/icons";
+import { Text } from "@/shared/ui/Text";
+import { Button } from "@/shared/ui/Button";
+import { PageHeader } from "@/shared/ui/PageHeader";
+import { PlusIcon } from "@/shared/ui/icons";
 import { FeedbackFilters } from "@/features/feedback/FeedbackFilters";
 import { FeedbackList } from "@/features/feedback/FeedbackList";
 import { FeedbackTopSidebar } from "@/features/feedback/FeedbackTopSidebar";

@@ -2,10 +2,10 @@
 
 import { useId } from "react";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/components/Card";
+import { Card } from "@/shared/ui/Card";
 import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
-import { Text } from "@/shared/components/Text";
-import { SegmentedControl } from "@/shared/components/SegmentedControl";
+import { Text } from "@/shared/ui/Text";
+import { SegmentedControl } from "@/shared/ui/SegmentedControl";
 import { PlayHistoryToggle } from "@/shared/components/PlayHistoryToggle";
 import { useStreamerMode } from "@/shared/contexts/streamer-mode-context";
 import { useAuth } from "@/shared/contexts/auth-context";

@@ -1,11 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { Input } from "@/shared/components/Input";
-import { Dropdown } from "@/shared/components/Dropdown";
-import { Button } from "@/shared/components/Button";
-import { LoadingState } from "@/shared/components/LoadingState";
+import { Text } from "@/shared/ui/Text";
+import { Input } from "@/shared/ui/Input";
+import { Dropdown } from "@/shared/ui/Dropdown";
+import { Button } from "@/shared/ui/Button";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import { useAuth } from "@/shared/contexts/auth-context";
 import { canActOn } from "@/shared/utils/staff-permissions";
 import type { AdminUserSort } from "@/shared/api/admin-client";
@@ -16,7 +16,7 @@ import {
   type StaffFilter,
 } from "@/features/admin/use-users-admin";
 import { UserRow } from "@/features/admin/UserRow";
-import { DataTable } from "@/shared/components/DataTable";
+import { DataTable } from "@/shared/ui/DataTable";
 
 const COLUMNS = "1.3fr 110px 80px 80px 100px 110px 130px";
 

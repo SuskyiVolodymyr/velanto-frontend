@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { PencilLine } from "lucide-react";
 import { useAuth } from "@/shared/contexts/auth-context";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import type { PackOverview } from "@/shared/types/pack";
 
 /**

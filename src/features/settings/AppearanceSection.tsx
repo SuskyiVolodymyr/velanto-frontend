@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/components/Card";
-import { Text } from "@/shared/components/Text";
-import { SwatchPicker } from "@/shared/components/SwatchPicker";
+import { Card } from "@/shared/ui/Card";
+import { Text } from "@/shared/ui/Text";
+import { SwatchPicker } from "@/shared/ui/SwatchPicker";
 import { useHydratedValue } from "@/shared/hooks/useHydratedValue";
 import {
   ACCENTS,

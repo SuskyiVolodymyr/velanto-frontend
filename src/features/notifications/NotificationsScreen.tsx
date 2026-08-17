@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/ui/Text";
+import { Button } from "@/shared/ui/Button";
 import { useAuth } from "@/shared/contexts/auth-context";
 import { useNotifications } from "@/shared/components/use-notifications";
 import { NotificationList } from "@/shared/components/NotificationList";

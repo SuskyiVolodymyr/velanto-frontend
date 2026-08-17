@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { formatDate } from "@/shared/utils/format-date";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { Username } from "@/shared/components/Username";
 import type { AdminUserDetail } from "@/shared/types/admin";
 

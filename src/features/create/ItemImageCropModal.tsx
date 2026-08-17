@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ImageCropModal } from "@/shared/components/ImageCropModal";
+import { ImageCropModal } from "@/shared/ui/ImageCropModal";
 import { MAX_ITEM_CROP } from "@/shared/utils/crop-image";
 
 /**

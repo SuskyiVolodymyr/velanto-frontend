@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import type { PlaysDayBucket } from "@/shared/types/admin";
 
 /** Weekday initial(s) for a YYYY-MM-DD day, e.g. "Mon". */

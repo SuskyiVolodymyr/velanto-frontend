@@ -18,7 +18,7 @@ import { pageContainer } from "@/shared/constants/page-container";
 import { CandidateCard } from "@/features/play/CandidateCard";
 import { PicksSummary } from "@/features/play/PicksSummary";
 import { ResumePlayModal } from "@/features/play/ResumePlayModal";
-import { LoadingState } from "@/shared/components/LoadingState";
+import { LoadingState } from "@/shared/ui/LoadingState";
 
 // How many columns a groups-format round lays its candidates out in, chosen by
 // candidate count so they fill the row instead of leaving fixed-width gaps: up

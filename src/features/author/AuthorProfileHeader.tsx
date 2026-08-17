@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { Button, buttonClassName } from "@/shared/components/Button";
+import { Text } from "@/shared/ui/Text";
+import { Button, buttonClassName } from "@/shared/ui/Button";
 import { Hidden } from "@/shared/components/Hidden";
 import { Username } from "@/shared/components/Username";
 import { AvatarLightbox } from "@/shared/components/AvatarLightbox";

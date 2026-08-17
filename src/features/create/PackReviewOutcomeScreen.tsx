@@ -12,12 +12,12 @@ import { formatLabel } from "@/shared/utils/pack-display";
 import { formatDateTime } from "@/shared/utils/format-date";
 import { cn } from "@/shared/utils/cn";
 import { pageContainer } from "@/shared/constants/page-container";
-import { Text } from "@/shared/components/Text";
-import { Badge } from "@/shared/components/Badge";
-import { PageHeader } from "@/shared/components/PageHeader";
+import { Text } from "@/shared/ui/Text";
+import { Badge } from "@/shared/ui/Badge";
+import { PageHeader } from "@/shared/ui/PageHeader";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { CoverImage } from "@/shared/components/CoverImage";
-import { LoadingState } from "@/shared/components/LoadingState";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import type { ChangeRequestMark, Pack } from "@/shared/types/pack";
 
 /** The three numbered steps in "What happens next". */

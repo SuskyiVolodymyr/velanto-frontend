@@ -10,10 +10,10 @@ import { useAuth } from "@/shared/contexts/auth-context";
 import { authClient } from "@/shared/api/auth-client";
 import { messageFromError } from "@/shared/utils/messageFromError";
 import { Lock } from "lucide-react";
-import { Button } from "@/shared/components/Button";
-import { Text } from "@/shared/components/Text";
-import { PasswordField } from "@/shared/components/form/PasswordField";
-import { FormBanner } from "@/shared/components/form/FormBanner";
+import { Button } from "@/shared/ui/Button";
+import { Text } from "@/shared/ui/Text";
+import { PasswordField } from "@/shared/ui/form/PasswordField";
+import { FormBanner } from "@/shared/ui/form/FormBanner";
 import { cn } from "@/shared/utils/cn";
 import { sanitizeNextPath } from "@/shared/utils/safe-redirect";
 import {

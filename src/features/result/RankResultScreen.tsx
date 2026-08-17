@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { RecapHeading } from "@/features/result/RecapHeading";
-import { RankedList } from "@/shared/components/RankedList";
+import { RankedList } from "@/shared/ui/RankedList";
 import { roundHeading } from "@/shared/utils/round-heading";
 import type { Pack } from "@/shared/types/pack";
 import type {

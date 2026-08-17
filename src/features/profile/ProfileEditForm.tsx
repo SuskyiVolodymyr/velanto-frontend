@@ -13,9 +13,9 @@ import {
 import { messageFromError } from "@/shared/utils/messageFromError";
 import { ApiError } from "@/shared/api/api-client";
 import { USERNAME_PATTERN } from "@/features/auth/auth.schema";
-import { Text } from "@/shared/components/Text";
-import { Button, buttonClassName } from "@/shared/components/Button";
-import { PageHeader } from "@/shared/components/PageHeader";
+import { Text } from "@/shared/ui/Text";
+import { Button, buttonClassName } from "@/shared/ui/Button";
+import { PageHeader } from "@/shared/ui/PageHeader";
 import { AvatarSection } from "@/features/profile/AvatarSection";
 import { ProfileEditPreview } from "@/features/profile/ProfileEditPreview";
 import { cn } from "@/shared/utils/cn";

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { UserAvatar } from "@/shared/components/UserAvatar";
-import { Modal } from "@/shared/components/Modal";
+import { Modal } from "@/shared/ui/Modal";
 import { mediaUrl } from "@/shared/utils/media-url";
 
 /**

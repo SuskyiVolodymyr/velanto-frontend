@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { ArrowRight, Scissors } from "lucide-react";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { cn } from "@/shared/utils/cn";
 import { RoundChrome, type RoundPlayerStatus } from "./RoundChrome";

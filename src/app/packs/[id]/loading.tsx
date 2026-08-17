@@ -1,4 +1,4 @@
-import { Skeleton } from "@/shared/components/Skeleton";
+import { Skeleton } from "@/shared/ui/Skeleton";
 import { pageContainer } from "@/shared/constants/page-container";
 import { cn } from "@/shared/utils/cn";
 

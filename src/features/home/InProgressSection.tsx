@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { PlayIcon } from "@/shared/components/icons";
+import { PlayIcon } from "@/shared/ui/icons";
 import { CoverImage } from "@/shared/components/CoverImage";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { formatRelativeTimeIntl } from "@/shared/utils/relative-time";
 import {
   listPlayResumes,

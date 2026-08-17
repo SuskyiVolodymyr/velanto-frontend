@@ -1,6 +1,6 @@
 "use client";
 
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { cn } from "@/shared/utils/cn";
 import type { Item } from "@/shared/types/pack";
 

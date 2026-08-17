@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { YouTubeCard } from "@/shared/components/YouTubeCard";
-import { ImageCard } from "@/shared/components/ImageCard";
+import { ImageCard } from "@/shared/ui/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,

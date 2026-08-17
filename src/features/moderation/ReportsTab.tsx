@@ -4,16 +4,16 @@ import { formatDate } from "@/shared/utils/format-date";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { Text } from "@/shared/components/Text";
-import { LoadingState } from "@/shared/components/LoadingState";
+import { Text } from "@/shared/ui/Text";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import {
   DataTable,
   DataTableRow,
   ROW_LINK_CLASS,
-} from "@/shared/components/DataTable";
+} from "@/shared/ui/DataTable";
 import { cn } from "@/shared/utils/cn";
-import { TablePagination } from "@/shared/components/TablePagination";
+import { TablePagination } from "@/shared/ui/TablePagination";
 import { reportReasonLabel } from "@/shared/constants/report-reasons";
 import { reportTargetLabel } from "@/shared/utils/report-display";
 import { ReportFilters } from "@/features/moderation/ReportFilters";

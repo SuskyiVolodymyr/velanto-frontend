@@ -1,6 +1,6 @@
 "use client";
 
-import { Dropdown } from "@/shared/components/Dropdown";
+import { Dropdown } from "@/shared/ui/Dropdown";
 import type { Role } from "@/shared/types/user";
 import {
   assignableRolesFor,

@@ -8,11 +8,11 @@ import {
   ShieldCheck,
   X as ClearIcon,
 } from "lucide-react";
-import { Text } from "@/shared/components/Text";
-import { SearchField } from "@/shared/components/SearchField";
-import { EmptyState } from "@/shared/components/EmptyState";
-import { Button, buttonClassName } from "@/shared/components/Button";
-import { PageHeader } from "@/shared/components/PageHeader";
+import { Text } from "@/shared/ui/Text";
+import { SearchField } from "@/shared/ui/SearchField";
+import { EmptyState } from "@/shared/ui/EmptyState";
+import { Button, buttonClassName } from "@/shared/ui/Button";
+import { PageHeader } from "@/shared/ui/PageHeader";
 import { cn } from "@/shared/utils/cn";
 import type { RulesDocument } from "@/features/rules/get-rules-server";
 import { ruleCategoryTone } from "@/features/rules/rule-category-tone";

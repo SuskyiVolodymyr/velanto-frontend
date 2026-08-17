@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/shared/utils/cn";
-import { Text } from "@/shared/components/Text";
-import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/ui/Text";
+import { Button } from "@/shared/ui/Button";
 import { PackCard } from "@/features/home/PackCard";
 import { FilterChipRow } from "@/features/home/FilterChipRow";
 import {

@@ -4,18 +4,18 @@ import { formatDateTime } from "@/shared/utils/format-date";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/shared/utils/cn";
-import { Text } from "@/shared/components/Text";
-import { Input } from "@/shared/components/Input";
-import { Dropdown } from "@/shared/components/Dropdown";
-import { LoadingState } from "@/shared/components/LoadingState";
+import { Text } from "@/shared/ui/Text";
+import { Input } from "@/shared/ui/Input";
+import { Dropdown } from "@/shared/ui/Dropdown";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import { useAdminLogs } from "@/features/admin/api/admin.queries";
 import {
   ADMIN_PAGE_SIZE,
   EMPTY_AUDIT_FILTERS,
   type AuditLogFilters,
 } from "@/features/admin/api/admin";
-import { DataTable, DataTableRow } from "@/shared/components/DataTable";
-import { TablePagination } from "@/shared/components/TablePagination";
+import { DataTable, DataTableRow } from "@/shared/ui/DataTable";
+import { TablePagination } from "@/shared/ui/TablePagination";
 import {
   AUDIT_ACTIONS,
   auditActionStyle,

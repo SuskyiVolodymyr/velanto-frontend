@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { SignInGate } from "@/shared/components/SignInGate";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/ui/Text";
+import { Button } from "@/shared/ui/Button";
 import { Hidden } from "@/shared/components/Hidden";
 import { Username } from "@/shared/components/Username";
 import { UserAvatar } from "@/shared/components/UserAvatar";

@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { SearchField } from "@/shared/components/SearchField";
+import { SearchField } from "@/shared/ui/SearchField";
 import { cn } from "@/shared/utils/cn";
 import {
   feedbackStatusTone,

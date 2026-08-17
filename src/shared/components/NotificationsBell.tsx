@@ -1,6 +1,6 @@
 "use client";
 
-import { BellIcon } from "@/shared/components/icons";
+import { BellIcon } from "@/shared/ui/icons";
 import { useTranslations } from "next-intl";
 import { useNotifications } from "@/shared/components/use-notifications";
 import { NotificationList } from "@/shared/components/NotificationList";

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Text } from "@/shared/components/Text";
-import { PageHeader } from "@/shared/components/PageHeader";
+import { Text } from "@/shared/ui/Text";
+import { PageHeader } from "@/shared/ui/PageHeader";
 import { cn } from "@/shared/utils/cn";
 import { PAGE_CONTAINER_FULL } from "@/shared/constants/page-container";
 import { PeopleFeed } from "@/features/home/PeopleFeed";

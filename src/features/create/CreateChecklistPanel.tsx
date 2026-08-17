@@ -2,7 +2,7 @@
 
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { cn } from "@/shared/utils/cn";
 import { COVER_TONES } from "@/shared/types/pack";
 import type { CreatePackValues } from "@/features/create/create-pack.schema";

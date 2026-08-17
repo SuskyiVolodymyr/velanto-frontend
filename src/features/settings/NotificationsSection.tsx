@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/components/Card";
-import { Text } from "@/shared/components/Text";
-import { Skeleton } from "@/shared/components/Skeleton";
+import { Card } from "@/shared/ui/Card";
+import { Text } from "@/shared/ui/Text";
+import { Skeleton } from "@/shared/ui/Skeleton";
 import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
 import { notificationVisual } from "@/shared/components/notification-visual";
 import { cn } from "@/shared/utils/cn";

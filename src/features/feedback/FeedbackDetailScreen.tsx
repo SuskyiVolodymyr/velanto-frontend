@@ -13,14 +13,14 @@ import {
   useDeleteFeedback,
 } from "@/features/feedback/api/feedback-detail.mutations";
 import { ApiError } from "@/shared/api/api-client";
-import { Text } from "@/shared/components/Text";
-import { LoadingState } from "@/shared/components/LoadingState";
+import { Text } from "@/shared/ui/Text";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import { Username } from "@/shared/components/Username";
-import { Button } from "@/shared/components/Button";
+import { Button } from "@/shared/ui/Button";
 import { Hidden } from "@/shared/components/Hidden";
 import { StatusBadge } from "@/shared/components/StatusBadge";
-import { Dropdown } from "@/shared/components/Dropdown";
-import { PageHeader } from "@/shared/components/PageHeader";
+import { Dropdown } from "@/shared/ui/Dropdown";
+import { PageHeader } from "@/shared/ui/PageHeader";
 import { TOPIC_KEYS } from "@/features/feedback/FeedbackCard";
 import { FeedbackVote } from "@/features/feedback/FeedbackVote";
 import { FeedbackComments } from "@/features/feedback/FeedbackComments";

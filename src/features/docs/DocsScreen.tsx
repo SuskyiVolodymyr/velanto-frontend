@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { PageHeader } from "@/shared/components/PageHeader";
+import { PageHeader } from "@/shared/ui/PageHeader";
 import {
   DocsSidebar,
   TOPICS,

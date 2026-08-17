@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { authClient, type OAuthProviders } from "@/shared/api/auth-client";
-import { Text } from "@/shared/components/Text";
-import { FormBanner } from "@/shared/components/form/FormBanner";
+import { Text } from "@/shared/ui/Text";
+import { FormBanner } from "@/shared/ui/form/FormBanner";
 import {
   OAuthProviderIcon,
   OAUTH_BRAND_CLASS,

@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import type { PackResults, RankResults } from "@/shared/types/play-results";
 
 function Panel({ children }: { children: React.ReactNode }) {

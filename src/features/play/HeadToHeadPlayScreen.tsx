@@ -24,7 +24,7 @@ import {
 // Aliased: a bare `Pick` would shadow TypeScript's own Pick<T, K> utility
 // inside this module.
 import type { Pick as SessionPick } from "@/features/play/use-play-session";
-import { LoadingState } from "@/shared/components/LoadingState";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import { pageContainer } from "@/shared/constants/page-container";
 import { cn } from "@/shared/utils/cn";
 import type { Pack } from "@/shared/types/pack";

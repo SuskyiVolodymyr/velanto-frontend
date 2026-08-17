@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Lock } from "lucide-react";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { cn } from "@/shared/utils/cn";
 import type { RoomPlayerState } from "./room-types";

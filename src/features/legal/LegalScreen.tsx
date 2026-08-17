@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Clock, Mail } from "lucide-react";
-import { PageHeader } from "@/shared/components/PageHeader";
+import { PageHeader } from "@/shared/ui/PageHeader";
 import { cn } from "@/shared/utils/cn";
 import { pageContainer } from "@/shared/constants/page-container";
 

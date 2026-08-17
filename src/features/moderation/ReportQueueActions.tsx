@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/ui/Text";
+import { Button } from "@/shared/ui/Button";
 import type { ReportStatus } from "@/shared/types/report";
 
 interface ReportQueueActionsProps {

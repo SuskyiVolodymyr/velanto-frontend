@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { useAdminActivity } from "@/features/admin/api/admin.queries";
 import {
   ACTIVITY_RANGES,

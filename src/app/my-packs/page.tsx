@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import Link from "next/link";
-import { buttonClassName } from "@/shared/components/Button";
-import { PlusIcon } from "@/shared/components/icons";
-import { PageHeader } from "@/shared/components/PageHeader";
+import { buttonClassName } from "@/shared/ui/Button";
+import { PlusIcon } from "@/shared/ui/icons";
+import { PageHeader } from "@/shared/ui/PageHeader";
 import { cn } from "@/shared/utils/cn";
 import { PAGE_CONTAINER_FULL } from "@/shared/constants/page-container";
 import { MyPacksFeed } from "@/features/home/MyPacksFeed";

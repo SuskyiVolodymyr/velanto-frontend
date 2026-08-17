@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { RotateCcw } from "lucide-react";
-import { Text } from "@/shared/components/Text";
-import { buttonClassName } from "@/shared/components/Button";
-import { BoardCard, BoardRow } from "@/shared/components/BoardCard";
-import { HeroCard } from "@/shared/components/HeroCard";
+import { Text } from "@/shared/ui/Text";
+import { buttonClassName } from "@/shared/ui/Button";
+import { BoardCard, BoardRow } from "@/shared/ui/BoardCard";
+import { HeroCard } from "@/shared/ui/HeroCard";
 import { cn } from "@/shared/utils/cn";
 import { friendsRoomsClient } from "./friends-rooms-client";
 

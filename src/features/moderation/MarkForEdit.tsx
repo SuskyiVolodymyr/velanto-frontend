@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Check, Pencil } from "lucide-react";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { cn } from "@/shared/utils/cn";
 import type {
   PackMarks,

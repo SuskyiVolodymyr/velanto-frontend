@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FlaskConical } from "lucide-react";
-import { SegmentedControl } from "@/shared/components/SegmentedControl";
+import { SegmentedControl } from "@/shared/ui/SegmentedControl";
 import { pageContainer } from "@/shared/constants/page-container";
 import { cn } from "@/shared/utils/cn";
 import { LAB_SCREENS } from "./screens";

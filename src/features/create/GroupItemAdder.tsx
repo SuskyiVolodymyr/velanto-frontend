@@ -4,9 +4,9 @@ import { useRef, useState, type DragEvent } from "react";
 import { useTranslations } from "next-intl";
 import type { ItemType } from "@/shared/types/pack";
 import { ITEM_TITLE_MAX } from "@/features/create/create-pack.schema";
-import { Input } from "@/shared/components/Input";
-import { Text } from "@/shared/components/Text";
-import { SegmentedControl } from "@/shared/components/SegmentedControl";
+import { Input } from "@/shared/ui/Input";
+import { Text } from "@/shared/ui/Text";
+import { SegmentedControl } from "@/shared/ui/SegmentedControl";
 import { cn } from "@/shared/utils/cn";
 import { ItemImageCropModal } from "@/features/create/ItemImageCropModal";
 

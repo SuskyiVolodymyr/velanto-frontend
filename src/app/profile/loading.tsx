@@ -1,4 +1,4 @@
-import { Skeleton } from "@/shared/components/Skeleton";
+import { Skeleton } from "@/shared/ui/Skeleton";
 
 /** Route-level skeleton shown while /profile resolves and redirects the owner
  * to /users/[id]. Mirrors that page's max-w-4xl layout: avatar + identity

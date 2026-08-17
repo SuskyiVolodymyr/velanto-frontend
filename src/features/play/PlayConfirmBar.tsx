@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
-import { Button } from "@/shared/components/Button";
-import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/ui/Button";
+import { Text } from "@/shared/ui/Text";
 import { cn } from "@/shared/utils/cn";
 
 export interface PlayConfirmBarProps {

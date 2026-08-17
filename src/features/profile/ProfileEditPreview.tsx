@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { Username } from "@/shared/components/Username";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import type { Role } from "@/shared/types/user";

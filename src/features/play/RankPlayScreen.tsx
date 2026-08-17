@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/shared/contexts/auth-context";
-import { Text } from "@/shared/components/Text";
-import { LoadingState } from "@/shared/components/LoadingState";
+import { Text } from "@/shared/ui/Text";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import { cn } from "@/shared/utils/cn";
 import { playsClient } from "@/shared/api/plays-client";
 import {
@@ -13,7 +13,7 @@ import {
   writeLastPlayId,
 } from "@/shared/utils/last-play-storage";
 import { YouTubeCard } from "@/shared/components/YouTubeCard";
-import { ImageCard } from "@/shared/components/ImageCard";
+import { ImageCard } from "@/shared/ui/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
@@ -21,7 +21,7 @@ import {
 import { mediaUrl } from "@/shared/utils/media-url";
 import { useRoundSelections } from "@/features/play/use-round-selections";
 import { usePlayResume } from "@/features/play/use-play-resume";
-import { RankedList, type RankedRow } from "@/shared/components/RankedList";
+import { RankedList, type RankedRow } from "@/shared/ui/RankedList";
 import { pageContainer } from "@/shared/constants/page-container";
 import { PlayChrome } from "@/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/features/play/PlayRoundHeader";

@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 
 /**
  * The recap column's heading — the mock's caps cyan "ROUND BY ROUND" and its

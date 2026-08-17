@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Dropdown } from "@/shared/components/Dropdown";
+import { Dropdown } from "@/shared/ui/Dropdown";
 import {
   PACK_LANGUAGES,
   PACK_LANGUAGE_NAMES,

@@ -9,7 +9,7 @@ import {
   extractYouTubeId,
   youtubeThumbnailUrl,
 } from "@/shared/utils/youtube";
-import { EmptyState } from "@/shared/components/EmptyState";
+import { EmptyState } from "@/shared/ui/EmptyState";
 
 interface GroupItemListProps {
   items: Item[];

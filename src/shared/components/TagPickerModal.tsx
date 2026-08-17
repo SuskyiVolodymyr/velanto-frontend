@@ -4,9 +4,9 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { PACK_TAGS } from "@/shared/types/pack";
 import type { PackTag } from "@/shared/types/pack";
-import { Modal } from "@/shared/components/Modal";
-import { Button } from "@/shared/components/Button";
-import { Text } from "@/shared/components/Text";
+import { Modal } from "@/shared/ui/Modal";
+import { Button } from "@/shared/ui/Button";
+import { Text } from "@/shared/ui/Text";
 import { cn } from "@/shared/utils/cn";
 
 export interface TagPickerModalProps {

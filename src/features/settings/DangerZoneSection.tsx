@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/components/Card";
-import { Text } from "@/shared/components/Text";
-import { Button } from "@/shared/components/Button";
-import { Input } from "@/shared/components/Input";
-import { Modal } from "@/shared/components/Modal";
+import { Card } from "@/shared/ui/Card";
+import { Text } from "@/shared/ui/Text";
+import { Button } from "@/shared/ui/Button";
+import { Input } from "@/shared/ui/Input";
+import { Modal } from "@/shared/ui/Modal";
 import { useAuth } from "@/shared/contexts/auth-context";
 import { authClient } from "@/shared/api/auth-client";
 import { ApiError } from "@/shared/api/api-client";

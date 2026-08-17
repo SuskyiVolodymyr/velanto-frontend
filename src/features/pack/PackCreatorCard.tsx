@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { formatDate } from "@/shared/utils/format-date";
 import { Hidden } from "@/shared/components/Hidden";
 import { Username } from "@/shared/components/Username";

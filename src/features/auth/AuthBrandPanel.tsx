@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Check } from "lucide-react";
-import { BrandMark } from "@/shared/components/BrandMark";
+import { BrandMark } from "@/shared/layout/BrandMark";
 import { cn } from "@/shared/utils/cn";
 
 // The pitch list's three accents map 1:1 to the semantic tokens (cyan = acc,

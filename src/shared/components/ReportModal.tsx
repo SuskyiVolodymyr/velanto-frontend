@@ -2,14 +2,14 @@
 
 import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { Modal } from "@/shared/components/Modal";
+import { Modal } from "@/shared/ui/Modal";
 import {
   Dropdown,
   type DropdownOption,
-} from "@/shared/components/Dropdown";
-import { Textarea } from "@/shared/components/Textarea";
-import { Text } from "@/shared/components/Text";
-import { Button } from "@/shared/components/Button";
+} from "@/shared/ui/Dropdown";
+import { Textarea } from "@/shared/ui/Textarea";
+import { Text } from "@/shared/ui/Text";
+import { Button } from "@/shared/ui/Button";
 import { ApiError } from "@/shared/api/api-client";
 import { reportsClient } from "@/shared/api/reports-client";
 import type { ReportType } from "@/shared/types/report";

@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import type { Pick } from "@/features/play/use-play-session";
 
 interface PicksSummaryProps {

@@ -7,7 +7,7 @@ import { AuthProvider } from "@/shared/contexts/auth-context";
 import { StreamerModeProvider } from "@/shared/contexts/streamer-mode-context";
 import { FriendsRoomsPresenceProvider } from "@/features/friends-rooms/friends-rooms-presence-context";
 import { QueryProvider } from "@/shared/contexts/query-provider";
-import { AppShell } from "@/shared/components/AppShell";
+import { AppShell } from "@/shared/layout/AppShell";
 import { getThemeInitScript } from "@/shared/utils/theme";
 import { getStreamerModeInitScript } from "@/shared/utils/streamer-mode";
 import { SITE_URL } from "@/shared/constants/site-url";

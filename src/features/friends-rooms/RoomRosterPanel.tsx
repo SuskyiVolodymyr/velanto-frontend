@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Check, UserPlus, X } from "lucide-react";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { Username } from "@/shared/components/Username";
 import { cn } from "@/shared/utils/cn";

@@ -7,7 +7,7 @@ import {
   getAuthorPacksServer,
 } from "@/features/author/get-user-server";
 import { buildJsonLd, jsonLdScript } from "@/shared/utils/jsonld";
-import { BackButton } from "@/shared/components/BackButton";
+import { BackButton } from "@/shared/ui/BackButton";
 import { buildOpenGraph } from "@/shared/utils/open-graph";
 import { SITE_URL } from "@/shared/constants/site-url";
 

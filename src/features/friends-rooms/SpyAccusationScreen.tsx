@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { EyeOff, Loader2 } from "lucide-react";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { cn } from "@/shared/utils/cn";
 import { PhaseDeadline } from "./PhaseDeadline";

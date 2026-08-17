@@ -4,20 +4,20 @@ import { formatDate } from "@/shared/utils/format-date";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { Username } from "@/shared/components/Username";
 import { UserAvatar } from "@/shared/components/UserAvatar";
-import { Input } from "@/shared/components/Input";
-import { Button } from "@/shared/components/Button";
-import { Dropdown } from "@/shared/components/Dropdown";
+import { Input } from "@/shared/ui/Input";
+import { Button } from "@/shared/ui/Button";
+import { Dropdown } from "@/shared/ui/Dropdown";
 import { Hidden } from "@/shared/components/Hidden";
-import { LoadingState } from "@/shared/components/LoadingState";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import { useAuth } from "@/shared/contexts/auth-context";
 import { useStreamerModeOrDefault } from "@/shared/contexts/streamer-mode-context";
 import { usersClient } from "@/shared/api/users-client";
 import { adminClient } from "@/shared/api/admin-client";
 import { useAdminStaff } from "@/features/admin/api/admin.queries";
-import { DataTable, DataTableRow } from "@/shared/components/DataTable";
+import { DataTable, DataTableRow } from "@/shared/ui/DataTable";
 import {
   assignableRolesFor,
   type AssignableRole,

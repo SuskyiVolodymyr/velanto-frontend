@@ -10,7 +10,7 @@ import {
   PACK_GRID_CLASS,
   PackGridSkeleton,
 } from "@/features/home/PackGridSkeleton";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { useMyPacks } from "@/features/home/api/my-packs.queries";
 import { PACKS_FEED_PAGE_SIZE } from "@/features/home/api/packs-feed";
 import {

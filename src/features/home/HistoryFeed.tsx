@@ -12,7 +12,7 @@ import {
   PACK_GRID_CLASS,
   PackGridSkeleton,
 } from "@/features/home/PackGridSkeleton";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { useHistory } from "@/features/home/api/history.queries";
 import type { HistorySort } from "@/features/home/api/history";
 import { PACKS_FEED_PAGE_SIZE } from "@/features/home/api/packs-feed";

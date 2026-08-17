@@ -39,9 +39,9 @@ const SURFACES = [
   "src/features/friends-rooms/RevealRankingTable.tsx",
   "src/features/result/NxNResultScreen.tsx",
   "src/features/pack/PackTopItemsList.tsx",
-  "src/shared/components/RankedList.tsx",
+  "src/shared/ui/RankedList.tsx",
   // Carries ITEM titles in the Top picked boards, not just player names.
-  "src/shared/components/BoardCard.tsx",
+  "src/shared/ui/BoardCard.tsx",
 ];
 
 describe("item titles are never clamped", () => {

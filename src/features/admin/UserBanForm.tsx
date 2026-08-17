@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Button } from "@/shared/components/Button";
-import { Dropdown } from "@/shared/components/Dropdown";
+import { Button } from "@/shared/ui/Button";
+import { Dropdown } from "@/shared/ui/Dropdown";
 import { type BanDuration } from "@/shared/api/users-client";
 import { BAN_DURATIONS } from "@/shared/constants/ban-durations";
 import {

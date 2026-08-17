@@ -10,10 +10,10 @@ import {
   extractYouTubeId,
   youtubeThumbnailUrl,
 } from "@/shared/utils/youtube";
-import { Text } from "@/shared/components/Text";
-import { SearchField } from "@/shared/components/SearchField";
-import { FilterChip } from "@/shared/components/FilterChip";
-import { EmptyState } from "@/shared/components/EmptyState";
+import { Text } from "@/shared/ui/Text";
+import { SearchField } from "@/shared/ui/SearchField";
+import { FilterChip } from "@/shared/ui/FilterChip";
+import { EmptyState } from "@/shared/ui/EmptyState";
 import {
   MarkForEditButton,
   MarkRequestField,

@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { Clock } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { Button, buttonClassName } from "@/shared/components/Button";
-import { EmptyState } from "@/shared/components/EmptyState";
+import { Button, buttonClassName } from "@/shared/ui/Button";
+import { EmptyState } from "@/shared/ui/EmptyState";
 import { PlayHistoryToggle } from "@/shared/components/PlayHistoryToggle";
 import { cn } from "@/shared/utils/cn";
 import { packFormatTone } from "@/shared/constants/pack-format-tone";

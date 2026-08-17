@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { SlidersIcon, ChevronDownIcon } from "@/shared/components/icons";
-import { Popover } from "@/shared/components/Popover";
+import { SlidersIcon, ChevronDownIcon } from "@/shared/ui/icons";
+import { Popover } from "@/shared/ui/Popover";
 import type { PackTag } from "@/shared/types/pack";
 import type { PackLanguage } from "@/shared/types/pack-language";
 import { FormatFilter } from "@/features/home/FormatFilter";

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { reportReasonLabel } from "@/shared/constants/report-reasons";
 import { reportTargetLabel } from "@/shared/utils/report-display";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import type { ReportWithReporter } from "@/shared/types/report";
 

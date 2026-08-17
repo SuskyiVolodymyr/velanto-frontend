@@ -2,10 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { YouTubeCard } from "@/shared/components/YouTubeCard";
-import { ImageCard } from "@/shared/components/ImageCard";
+import { ImageCard } from "@/shared/ui/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,

@@ -3,7 +3,7 @@ import { formatDate } from "@/shared/utils/format-date";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { isActiveBan, isPermanentBan } from "@/shared/utils/ban-display";
 import { resolveBanReasonTitle } from "@/shared/utils/ban-reason-title";
 import type { RuleCategory } from "@/shared/types/rules";

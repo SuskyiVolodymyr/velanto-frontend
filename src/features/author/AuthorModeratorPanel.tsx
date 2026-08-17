@@ -2,10 +2,10 @@
 import { formatDate, formatDateTime } from "@/shared/utils/format-date";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { Button } from "@/shared/components/Button";
-import { Dropdown } from "@/shared/components/Dropdown";
-import { LoadingState } from "@/shared/components/LoadingState";
+import { Text } from "@/shared/ui/Text";
+import { Button } from "@/shared/ui/Button";
+import { Dropdown } from "@/shared/ui/Dropdown";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import { BAN_DURATIONS } from "@/shared/constants/ban-durations";
 import {
   BanReasonPicker,

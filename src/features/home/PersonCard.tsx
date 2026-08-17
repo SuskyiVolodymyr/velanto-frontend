@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Button } from "@/shared/components/Button";
+import { Button } from "@/shared/ui/Button";
 import { Hidden } from "@/shared/components/Hidden";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { Username } from "@/shared/components/Username";

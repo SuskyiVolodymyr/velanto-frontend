@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { Button } from "@/shared/components/Button";
-import { Dropdown } from "@/shared/components/Dropdown";
+import { Text } from "@/shared/ui/Text";
+import { Button } from "@/shared/ui/Button";
+import { Dropdown } from "@/shared/ui/Dropdown";
 import { BAN_DURATIONS } from "@/shared/constants/ban-durations";
 import {
   BanReasonPicker,

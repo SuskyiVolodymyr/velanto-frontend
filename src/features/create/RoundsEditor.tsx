@@ -6,18 +6,18 @@ import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
 import type { GroupMode, SlotMode } from "@/shared/types/pack";
 import { resolveRoundDraws } from "@/shared/utils/round-draw";
-import { Input } from "@/shared/components/Input";
-import { Dropdown } from "@/shared/components/Dropdown";
-import { SegmentedControl } from "@/shared/components/SegmentedControl";
+import { Input } from "@/shared/ui/Input";
+import { Dropdown } from "@/shared/ui/Dropdown";
+import { SegmentedControl } from "@/shared/ui/SegmentedControl";
 import {
   RoundsBulkBar,
   RoundsAddButton,
 } from "@/features/create/RoundsToolbar";
-import { Button } from "@/shared/components/Button";
-import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/ui/Button";
+import { Text } from "@/shared/ui/Text";
 import { cn } from "@/shared/utils/cn";
 import { StepHeader } from "@/features/create/StepHeader";
-import { getFieldError } from "@/shared/components/form/getFieldError";
+import { getFieldError } from "@/shared/ui/form/getFieldError";
 import {
   newRound,
   randomSlot,

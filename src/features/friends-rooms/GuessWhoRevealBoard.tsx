@@ -2,7 +2,7 @@
 
 import { Fragment } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { cn } from "@/shared/utils/cn";
 import { labelTone } from "./guess-who-labels";
 import { BetweenNextButton } from "./BetweenNextButton";

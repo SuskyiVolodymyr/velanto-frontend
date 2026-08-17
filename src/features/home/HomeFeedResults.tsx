@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import type { PackSummary } from "@/shared/types/pack";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { PackCard } from "@/features/home/PackCard";
 import {
   PACK_GRID_CLASS,

@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Reply, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { Skeleton } from "@/shared/components/Skeleton";
+import { Text } from "@/shared/ui/Text";
+import { Skeleton } from "@/shared/ui/Skeleton";
 import {
   CommentAction,
   CommentComposerCard,
@@ -20,12 +20,12 @@ import {
   commentAvatarSize,
   type CommentRowVariant,
 } from "@/shared/components/CommentCard";
-import { Button } from "@/shared/components/Button";
-import { Spinner } from "@/shared/components/Spinner";
+import { Button } from "@/shared/ui/Button";
+import { Spinner } from "@/shared/ui/Spinner";
 import { Hidden } from "@/shared/components/Hidden";
 import { Username } from "@/shared/components/Username";
 import { UserAvatar } from "@/shared/components/UserAvatar";
-import { Tooltip } from "@/shared/components/Tooltip";
+import { Tooltip } from "@/shared/ui/Tooltip";
 import { VoteControl } from "@/shared/components/VoteControl";
 import { useAuth } from "@/shared/contexts/auth-context";
 import { isStaff } from "@/shared/utils/user-role";

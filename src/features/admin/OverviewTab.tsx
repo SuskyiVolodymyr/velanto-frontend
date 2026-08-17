@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { LoadingState } from "@/shared/components/LoadingState";
+import { Text } from "@/shared/ui/Text";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import { useAdminOverview } from "@/features/admin/api/admin.queries";
 import { PlaysChart } from "@/features/admin/PlaysChart";
 import { ActivityChart } from "@/features/admin/ActivityChart";

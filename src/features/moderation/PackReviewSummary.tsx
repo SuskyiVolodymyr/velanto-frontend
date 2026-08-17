@@ -1,8 +1,8 @@
 import { useTranslations } from "next-intl";
 import { formatLabel } from "@/shared/utils/pack-display";
 import { PACK_LANGUAGE_NAMES } from "@/shared/types/pack-language";
-import { Text } from "@/shared/components/Text";
-import { Badge } from "@/shared/components/Badge";
+import { Text } from "@/shared/ui/Text";
+import { Badge } from "@/shared/ui/Badge";
 import { CoverImage } from "@/shared/components/CoverImage";
 import type { Pack } from "@/shared/types/pack";
 

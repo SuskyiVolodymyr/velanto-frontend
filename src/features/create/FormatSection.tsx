@@ -4,7 +4,7 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import type { PackFormat } from "@/shared/types/pack";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { cn } from "@/shared/utils/cn";
 import { StepHeader } from "@/features/create/StepHeader";
 import { FormatGlyph, FORMAT_HUE } from "@/features/create/FormatGlyph";

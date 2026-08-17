@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/ui/Text";
+import { Button } from "@/shared/ui/Button";
 
 // App-wide error boundary: catches a render/runtime error anywhere under the
 // root layout that no closer error boundary handled, so the user sees a

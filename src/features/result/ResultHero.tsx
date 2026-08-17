@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { HeroCard } from "@/shared/components/HeroCard";
+import { HeroCard } from "@/shared/ui/HeroCard";
 import { HERO_TITLE_KEY } from "@/features/result/result-format-copy";
 import type { Pack } from "@/shared/types/pack";
 

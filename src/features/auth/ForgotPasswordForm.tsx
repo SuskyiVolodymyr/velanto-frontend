@@ -5,11 +5,11 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Mail, KeyRound, Lock } from "lucide-react";
-import { Text } from "@/shared/components/Text";
-import { Button } from "@/shared/components/Button";
-import { TextField } from "@/shared/components/form/TextField";
-import { PasswordField } from "@/shared/components/form/PasswordField";
-import { FormBanner } from "@/shared/components/form/FormBanner";
+import { Text } from "@/shared/ui/Text";
+import { Button } from "@/shared/ui/Button";
+import { TextField } from "@/shared/ui/form/TextField";
+import { PasswordField } from "@/shared/ui/form/PasswordField";
+import { FormBanner } from "@/shared/ui/form/FormBanner";
 import { authClient } from "@/shared/api/auth-client";
 import {
   resetPasswordSchema,

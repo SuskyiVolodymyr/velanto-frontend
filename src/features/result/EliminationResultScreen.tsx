@@ -2,8 +2,8 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/components/Card";
-import { Text } from "@/shared/components/Text";
+import { Card } from "@/shared/ui/Card";
+import { Text } from "@/shared/ui/Text";
 import { RecapHeading } from "@/features/result/RecapHeading";
 import { roundHeading } from "@/shared/utils/round-heading";
 import { cn } from "@/shared/utils/cn";

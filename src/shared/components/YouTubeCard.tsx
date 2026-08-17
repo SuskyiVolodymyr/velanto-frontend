@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ExternalLink } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import { Badge } from "@/shared/components/Badge";
+import { Badge } from "@/shared/ui/Badge";
 import { youtubeThumbnailUrl } from "@/shared/utils/youtube";
 import { loadYouTubeIframeApi } from "@/shared/utils/youtube-iframe-api";
 import {

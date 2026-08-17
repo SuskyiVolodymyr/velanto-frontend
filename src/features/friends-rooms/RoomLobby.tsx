@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { ConfirmModal } from "@/shared/components/ConfirmModal";
+import { Text } from "@/shared/ui/Text";
+import { ConfirmModal } from "@/shared/ui/ConfirmModal";
 import {
   MIN_PLAYERS,
   ROOM_MODE_BOUNDS,

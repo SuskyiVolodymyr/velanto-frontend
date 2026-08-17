@@ -5,9 +5,9 @@ import { useRules } from "@/shared/api/rules.queries";
 import {
   Dropdown,
   type DropdownOption,
-} from "@/shared/components/Dropdown";
-import { Textarea } from "@/shared/components/Textarea";
-import { Text } from "@/shared/components/Text";
+} from "@/shared/ui/Dropdown";
+import { Textarea } from "@/shared/ui/Textarea";
+import { Text } from "@/shared/ui/Text";
 import type { BanReason } from "@/shared/types/rules";
 import type { BanUserInput } from "@/shared/api/users-client";
 

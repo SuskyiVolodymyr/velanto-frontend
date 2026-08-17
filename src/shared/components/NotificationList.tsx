@@ -2,8 +2,8 @@
 
 import { Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { Spinner } from "@/shared/components/Spinner";
+import { Text } from "@/shared/ui/Text";
+import { Spinner } from "@/shared/ui/Spinner";
 import { NotificationItem } from "@/shared/components/NotificationItem";
 import type { Notification } from "@/shared/types/notification";
 

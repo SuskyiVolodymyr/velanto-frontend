@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { BoardCard, BoardRow } from "@/shared/components/BoardCard";
+import { BoardCard, BoardRow } from "@/shared/ui/BoardCard";
 import { withCompetitionRanks } from "@/features/result/result-table";
 import type {
   PodiumTally,

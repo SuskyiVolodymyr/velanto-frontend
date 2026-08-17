@@ -5,8 +5,8 @@ import { formatDateTime } from "@/shared/utils/format-date";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { LoadingState } from "@/shared/components/LoadingState";
+import { Text } from "@/shared/ui/Text";
+import { LoadingState } from "@/shared/ui/LoadingState";
 import { Username } from "@/shared/components/Username";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import {
@@ -19,9 +19,9 @@ import {
   commentAvatarSize,
 } from "@/shared/components/CommentCard";
 import { AuthorHoverTrigger } from "@/features/pack/AuthorHoverTrigger";
-import { Button } from "@/shared/components/Button";
+import { Button } from "@/shared/ui/Button";
 import { Hidden } from "@/shared/components/Hidden";
-import { Tooltip } from "@/shared/components/Tooltip";
+import { Tooltip } from "@/shared/ui/Tooltip";
 import { useAuth } from "@/shared/contexts/auth-context";
 import { cn } from "@/shared/utils/cn";
 import { isStaff } from "@/shared/utils/user-role";

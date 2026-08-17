@@ -3,7 +3,7 @@ import { formatDate } from "@/shared/utils/format-date";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { Username } from "@/shared/components/Username";
 import { Hidden } from "@/shared/components/Hidden";
 import { formatBanStatus } from "@/shared/utils/ban-display";
@@ -15,7 +15,7 @@ import type { Role } from "@/shared/types/user";
 import type { AdminUserRow } from "@/shared/types/admin";
 import { UserBanForm } from "@/features/admin/UserBanForm";
 import { RoleSelect } from "@/features/admin/RoleSelect";
-import { DataTableRow } from "@/shared/components/DataTable";
+import { DataTableRow } from "@/shared/ui/DataTable";
 
 interface UserRowProps {
   row: AdminUserRow;

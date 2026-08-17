@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { pageContainer } from "@/shared/constants/page-container";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { cn } from "@/shared/utils/cn";
 import { usePlayFocus } from "@/shared/contexts/play-focus-context";
 import { RoomHeader } from "@/features/friends-rooms/RoomHeader";

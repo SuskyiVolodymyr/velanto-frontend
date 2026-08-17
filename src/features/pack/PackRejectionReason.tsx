@@ -2,8 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/shared/contexts/auth-context";
-import { Card } from "@/shared/components/Card";
-import { Text } from "@/shared/components/Text";
+import { Card } from "@/shared/ui/Card";
+import { Text } from "@/shared/ui/Text";
 import type { PackStatus } from "@/shared/types/pack";
 
 /**

@@ -23,14 +23,14 @@ import {
   BODY_MAX,
   TITLE_MAX,
 } from "@/features/feedback/new-feedback.schema";
-import { Button } from "@/shared/components/Button";
-import { Text } from "@/shared/components/Text";
-import { LoadingState } from "@/shared/components/LoadingState";
-import { FieldError } from "@/shared/components/form/FieldError";
-import { TextField } from "@/shared/components/form/TextField";
-import { TextareaField } from "@/shared/components/form/TextareaField";
-import { SegmentedField } from "@/shared/components/form/SegmentedField";
-import { getFieldError } from "@/shared/components/form/getFieldError";
+import { Button } from "@/shared/ui/Button";
+import { Text } from "@/shared/ui/Text";
+import { LoadingState } from "@/shared/ui/LoadingState";
+import { FieldError } from "@/shared/ui/form/FieldError";
+import { TextField } from "@/shared/ui/form/TextField";
+import { TextareaField } from "@/shared/ui/form/TextareaField";
+import { SegmentedField } from "@/shared/ui/form/SegmentedField";
+import { getFieldError } from "@/shared/ui/form/getFieldError";
 import { cn } from "@/shared/utils/cn";
 import { pageContainer } from "@/shared/constants/page-container";
 

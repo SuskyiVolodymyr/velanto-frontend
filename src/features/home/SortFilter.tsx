@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { FilterChipRow } from "@/features/home/FilterChipRow";
 import {
   DATE_ORDER_LABEL_KEYS,

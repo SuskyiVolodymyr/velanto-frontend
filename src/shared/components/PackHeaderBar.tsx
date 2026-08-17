@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { CoverImage } from "@/shared/components/CoverImage";
-import { Text } from "@/shared/components/Text";
-import { SidebarToggle } from "@/shared/components/SidebarToggle";
-import { HeaderUserCluster } from "@/shared/components/HeaderUserCluster";
+import { Text } from "@/shared/ui/Text";
+import { SidebarToggle } from "@/shared/layout/SidebarToggle";
+import { HeaderUserCluster } from "@/shared/layout/HeaderUserCluster";
 import { STICKY_HEADER_SHELL_CLASS } from "@/shared/constants/sticky-header-shell";
 import type { Pack } from "@/shared/types/pack";
 

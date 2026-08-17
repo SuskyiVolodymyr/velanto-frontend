@@ -3,8 +3,8 @@
 import { useEffect, useId, useRef, useState, type ReactElement } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { buttonClassName } from "@/shared/components/Button";
-import { Text } from "@/shared/components/Text";
+import { buttonClassName } from "@/shared/ui/Button";
+import { Text } from "@/shared/ui/Text";
 import { cn } from "@/shared/utils/cn";
 
 /**

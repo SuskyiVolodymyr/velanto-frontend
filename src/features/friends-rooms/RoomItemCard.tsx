@@ -1,11 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { Badge } from "@/shared/components/Badge";
+import { Text } from "@/shared/ui/Text";
+import { Badge } from "@/shared/ui/Badge";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { YouTubeCard } from "@/shared/components/YouTubeCard";
-import { ImageCard } from "@/shared/components/ImageCard";
+import { ImageCard } from "@/shared/ui/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,

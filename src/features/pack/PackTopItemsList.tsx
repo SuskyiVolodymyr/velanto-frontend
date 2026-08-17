@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/components/Text";
-import { Button } from "@/shared/components/Button";
-import { ProgressBar } from "@/shared/components/ProgressBar";
+import { Text } from "@/shared/ui/Text";
+import { Button } from "@/shared/ui/Button";
+import { ProgressBar } from "@/shared/ui/ProgressBar";
 import { cn } from "@/shared/utils/cn";
 import { toneFor } from "@/features/play/candidate-tone";
 import { withCompetitionRanks } from "@/features/result/result-table";

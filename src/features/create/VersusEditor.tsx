@@ -13,16 +13,16 @@ import {
   RANDOM_POOL_VALUE,
   availablePoolCount,
 } from "@/features/create/random-pool-option";
-import { Input } from "@/shared/components/Input";
-import { Dropdown } from "@/shared/components/Dropdown";
+import { Input } from "@/shared/ui/Input";
+import { Dropdown } from "@/shared/ui/Dropdown";
 import {
   RoundsBulkBar,
   RoundsAddButton,
 } from "@/features/create/RoundsToolbar";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { cn } from "@/shared/utils/cn";
 import { StepHeader } from "@/features/create/StepHeader";
-import { getFieldError } from "@/shared/components/form/getFieldError";
+import { getFieldError } from "@/shared/ui/form/getFieldError";
 import {
   type CreatePackValues,
   NXN_SIDE_COUNT_MIN,

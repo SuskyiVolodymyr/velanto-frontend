@@ -8,13 +8,13 @@ import {
   PACK_LANGUAGES,
   PACK_LANGUAGE_NAMES,
 } from "@/shared/types/pack-language";
-import { Text } from "@/shared/components/Text";
+import { Text } from "@/shared/ui/Text";
 import { TagPickerModal } from "@/shared/components/TagPickerModal";
-import { TextField } from "@/shared/components/form/TextField";
-import { TextareaField } from "@/shared/components/form/TextareaField";
-import { SelectField } from "@/shared/components/form/SelectField";
+import { TextField } from "@/shared/ui/form/TextField";
+import { TextareaField } from "@/shared/ui/form/TextareaField";
+import { SelectField } from "@/shared/ui/form/SelectField";
 import { CoverImageField } from "@/features/create/CoverImageField";
-import { SwatchPicker } from "@/shared/components/SwatchPicker";
+import { SwatchPicker } from "@/shared/ui/SwatchPicker";
 import { StepHeader } from "@/features/create/StepHeader";
 import {
   type CreatePackValues,

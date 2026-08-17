@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/shared/contexts/auth-context";
-import { Text } from "@/shared/components/Text";
-import { Card } from "@/shared/components/Card";
-import { buttonClassName } from "@/shared/components/Button";
+import { Text } from "@/shared/ui/Text";
+import { Card } from "@/shared/ui/Card";
+import { buttonClassName } from "@/shared/ui/Button";
 
 /**
  * `/profile` is now just an entry point to the owner's own public profile at

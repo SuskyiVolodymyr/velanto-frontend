@@ -22,8 +22,8 @@ import {
 } from "@/shared/types/pack-language";
 import { pageContainer } from "@/shared/constants/page-container";
 import { cn } from "@/shared/utils/cn";
-import { Button } from "@/shared/components/Button";
-import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/ui/Button";
+import { Text } from "@/shared/ui/Text";
 import { PackMetaFields } from "@/features/create/PackMetaFields";
 import { FormatSection } from "@/features/create/FormatSection";
 import { PoolsSection } from "@/features/create/PoolsSection";
