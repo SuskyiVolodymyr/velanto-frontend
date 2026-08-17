@@ -1,19 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { useBackTarget } from "@/hooks/use-back-target";
 import { FROM } from "@/utils/back-origins";
-import { packsClient } from "@/api/packs-client";
-import type { CreatePackInput } from "@/api/packs-client";
-import { messageFromError } from "@/utils/messageFromError";
 import { COVER_TONES } from "@/types/pack";
 import {
   DEFAULT_PACK_LANGUAGE,
@@ -24,66 +18,28 @@ import { pageContainer } from "@/constants/page-container";
 import { cn } from "@/utils/cn";
 import { Button } from "@/ui/Button";
 import { Text } from "@/ui/Text";
+import { CreatePackBar } from "@/features/create/components/CreatePackBar";
 import { PackMetaFields } from "@/features/create/components/PackMetaFields";
 import { FormatSection } from "@/features/create/components/FormatSection";
 import { PoolsSection } from "@/features/create/components/PoolsSection";
-import {
-  PendingImageDraftsProvider,
-  type PendingImageDrafts,
-} from "@/features/create/pending-image-drafts";
+import { PendingImageDraftsProvider } from "@/features/create/pending-image-drafts";
 import { RoundsEditor } from "@/features/create/components/RoundsEditor";
 import { VersusEditor } from "@/features/create/components/VersusEditor";
 import { CreateChecklistPanel } from "@/features/create/components/CreateChecklistPanel";
 import { CreateFeasibilityPanel } from "@/features/create/components/CreateFeasibilityPanel";
 import { summarizePack } from "@/features/create/create-pack.summary";
-import {
-  newGroup,
-  newRound,
-  versusRounds,
-} from "@/features/create/create-pack.defaults";
+import { newGroup, newRound } from "@/features/create/create-pack.defaults";
 import {
   createPackSchema,
   type CreatePackValues,
 } from "@/features/create/create-pack.schema";
-
-// How long the sticky bar's draft-status subtitle shows "Draft · saved just
-// now" before reverting. A save-draft click still navigates away immediately
-// on success (see the onValid draft branch below) — real e2e/vitest coverage
-// asserts on that immediate `router.push`, and this repo already treats
-// stable navigation timing as load-bearing (see the accessible-name note on
-// the submit button below). This flash is therefore mostly cosmetic: it's
-// genuinely visible only in the moment before Next.js swaps the route, but
-// it's cheap to keep correct for whenever that transition takes longer than
-// an instant (slow network, cached-render delay, etc).
-const JUST_SAVED_MS = 2200;
-
-// A fresh versus draft defaults to this many rounds; the author tunes it in the
-// VersusEditor. Per-side count starts at 1 for both nxn and 1v1.
-// A fresh versus pack starts with ONE matchup; the per-round VersusEditor adds
-// more (like RoundsEditor). Starting at 1 also keeps a single-item-pool draft
-// feasible until the author shapes it.
-const DEFAULT_VERSUS_ROUNDS = 1;
-
-function isVersusFormat(format: CreatePackValues["format"]): boolean {
-  return format === "nxn" || format === "1v1";
-}
-
-type RoundFamily = "versus" | "elimination";
-
-// Which body a format uses. The two families have incompatible round shapes
-// (2-slot versus, 1-slot elimination with a count/pins), so switching between
-// them reshapes `rounds`.
-function familyOf(format: CreatePackValues["format"]): RoundFamily {
-  if (isVersusFormat(format)) return "versus";
-  return "elimination";
-}
-
-// The family the current rounds are already shaped for — read back so a switch
-// WITHIN a family (e.g. save_one → rank_blind) leaves the author's rounds alone.
-function roundsFamily(rounds: CreatePackValues["rounds"]): RoundFamily {
-  if (rounds[0]?.slots.length === 2) return "versus";
-  return "elimination";
-}
+import {
+  familyOf,
+  useRoundFamilySync,
+} from "@/features/create/hooks/use-round-family-sync";
+import { usePendingImagePools } from "@/features/create/hooks/use-pending-image-pools";
+import { useRootErrorFocus } from "@/features/create/hooks/use-root-error-focus";
+import { useSavePack } from "@/features/create/hooks/use-save-pack";
 
 // Editing reuses this whole form: `initialValues` seeds it from an existing
 // pack and `packId` switches the submit to a PATCH. Omit both for the create
@@ -102,7 +58,6 @@ export function CreatePackForm({
   const t = useTranslations("create");
   const router = useRouter();
   const pathname = usePathname();
-  const queryClient = useQueryClient();
   const { status } = useAuth();
   const isEdit = mode === "edit";
   // Declared up here, above the early returns further down: a hook after a
@@ -124,58 +79,11 @@ export function CreatePackForm({
   // True while a cover image is uploading; blocks submit so a pending cover
   // isn't silently dropped (see CoverImageField).
   const [coverUploading, setCoverUploading] = useState(false);
-  // Indexes of pools whose open item panel is holding an uploaded-but-
-  // uncommitted image (#437). State rather than a ref for the same reason
-  // `justSaved` is: `onValid` is reachable from the `handleSubmit(...)` call
-  // made during render, and react-hooks/refs rejects a ref read from there.
-  // It costs nothing — this changes when an image is staged or committed, not
-  // per keystroke, and the update is a no-op when the status is unchanged.
-  const [pendingImagePools, setPendingImagePools] = useState<readonly number[]>(
-    [],
-  );
-  // The form-level error node, so a refusal the author can't see can be
-  // scrolled to and focused. Driven by a counter + effect rather than touched
-  // directly in `onValid`, for the same reason `justSaved` is: onValid is
-  // reachable from the `handleSubmit(...)` call made during render, and
-  // react-hooks/refs rejects a ref read from there. A counter, not a boolean,
-  // so a second refused save re-focuses instead of doing nothing.
-  const rootErrorRef = useRef<HTMLDivElement>(null);
-  const [rootErrorShown, setRootErrorShown] = useState(0);
-  useEffect(() => {
-    if (rootErrorShown === 0) return;
-    // Optional-called: jsdom doesn't implement scrollIntoView, and an
-    // exception here would take the error message down with it.
-    rootErrorRef.current?.scrollIntoView?.({ block: "center" });
-    rootErrorRef.current?.focus();
-  }, [rootErrorShown]);
-  const pendingImageDrafts = useMemo<PendingImageDrafts>(
-    () => ({
-      report: (index, pending) =>
-        setPendingImagePools((current) => {
-          if (pending === current.includes(index)) return current;
-          return pending
-            ? [...current, index]
-            : current.filter((pool) => pool !== index);
-        }),
-    }),
-    [],
-  );
-  // Which button initiated the in-flight submit, so only that one shows its
-  // spinner/label (both actions run the same validation + mutation).
-  const [submitMode, setSubmitMode] = useState<"publish" | "draft">("publish");
-  // True for JUST_SAVED_MS after a successful draft save — drives the sticky
-  // bar's "Draft · saved just now" subtitle (see the constant's comment for
-  // why this rarely outlives the redirect it's racing). The auto-revert timer
-  // is a declarative effect (not a ref) on purpose: `onValid` below is reached
-  // from a `handleSubmit(...)` call made during render (the form's own
-  // onSubmit), and react-hooks/refs flags a ref read anywhere reachable from
-  // there — this way `onValid` only ever calls a state setter.
-  const [justSaved, setJustSaved] = useState(false);
-  useEffect(() => {
-    if (!justSaved) return;
-    const timer = setTimeout(() => setJustSaved(false), JUST_SAVED_MS);
-    return () => clearTimeout(timer);
-  }, [justSaved]);
+  const { pools: pendingImagePools, drafts: pendingImageDrafts } =
+    usePendingImagePools();
+  // Destructured, not held as `rootError.ref`: react-hooks/refs rejects a ref
+  // reached through a property access during render.
+  const { ref: rootErrorRef, reveal: revealRootError } = useRootErrorFocus();
 
   // Seed one pool plus a matching elimination round drawing from it. Computed
   // once (lazy initializer) so the round's groupId keeps pointing at the pool.
@@ -209,14 +117,22 @@ export function CreatePackForm({
     setError,
     setValue,
     getValues,
-    formState: { isSubmitting, errors, isDirty },
+    formState: { errors },
   } = methods;
+
+  const { save, justSaved } = useSavePack({
+    isEdit,
+    packId,
+    setError,
+    pendingImagePools,
+    revealRootError,
+  });
 
   // A single whole-form subscription: `format` decides which body (Rounds vs
   // Versus) to render, and the same object feeds the sticky bar's title +
-  // blocked-submit tooltip (via summarizePack) now that those live here
-  // instead of the old desktop preview CTA. Each section still subscribes to
-  // its own slices internally for its own rendering.
+  // blocked-submit tooltip (via summarizePack) now that those live here instead
+  // of the old desktop preview CTA. Each section still subscribes to its own
+  // slices internally for its own rendering.
   const values = useWatch({ control }) as CreatePackValues;
   const format = values.format;
   const summary = summarizePack(values);
@@ -224,148 +140,8 @@ export function CreatePackForm({
   // display gate (mirrors the old CreatePreviewPanel CTA) — edit mode's
   // "Save changes" always runs the real zod validation on click instead.
   const blocked = !isEdit && !summary.canPublish;
-  const barTitle = values.title?.trim() || t("bar.newPackTitle");
-  // `isDirty` is relative to the form's ORIGINAL defaultValues, not "since
-  // the last save" (react-hook-form doesn't move that baseline without an
-  // explicit `reset`) — so after a draft save this reverts to "unsaved
-  // changes" rather than clearing, which undersells a real save. `justSaved`
-  // is given priority for the window where that matters; see JUST_SAVED_MS.
-  const draftNote = justSaved
-    ? t("bar.draftNoteSaved")
-    : isDirty
-      ? t("bar.draftNoteUnsaved")
-      : undefined;
 
-  // Reshape `rounds` when the format changes between the elimination family
-  // (single-slot rounds) and the versus family (two-slot rounds). Keyed on
-  // `format` and reading via getValues so it fires only on an actual switch,
-  // never on every keystroke.
-  useEffect(() => {
-    const groups = getValues("groups");
-    const rounds = getValues("rounds");
-    const firstId = groups[0]?.id ?? "";
-    const target = familyOf(format);
-    const current = roundsFamily(rounds);
-
-    if (target === current) {
-      // Same family — the only intra-family reshape is nxn → 1v1, which keeps
-      // each round's own pair but re-pins every side's count to exactly 1.
-      if (
-        target === "versus" &&
-        format === "1v1" &&
-        rounds.some((round) =>
-          round.slots.some((slot) => (slot.count ?? 1) !== 1),
-        )
-      ) {
-        setValue(
-          "rounds",
-          rounds.map((round) => ({
-            ...round,
-            slots: round.slots.map((slot) => ({ ...slot, count: 1 })),
-          })),
-          { shouldDirty: true },
-        );
-      }
-      return;
-    }
-
-    // Crossing families: reshape to a single default round of the target family
-    // (the shapes are incompatible, so there's nothing to carry over).
-    if (target === "versus") {
-      const aId = groups[0]?.id ?? "";
-      const bId = groups[1]?.id ?? groups[0]?.id ?? "";
-      setValue("rounds", versusRounds(aId, bId, DEFAULT_VERSUS_ROUNDS, 1), {
-        shouldDirty: true,
-      });
-    } else {
-      setValue("rounds", [newRound(firstId)], { shouldDirty: true });
-    }
-  }, [format, getValues, setValue]);
-
-  async function onValid(formValues: CreatePackValues, draft: boolean) {
-    // A pool's open item panel can hold an uploaded image that isn't in
-    // `formValues` at all — items only enter the pack through their own
-    // Add/Save. Saving anyway looks like it worked and quietly leaves the
-    // picture behind, which is exactly how #437 cost an author an evening's
-    // worth of them. Refuse, and say so.
-    if (pendingImagePools.length > 0) {
-      setError("root", {
-        message: t("unsavedItemImage", {
-          pool: Math.min(...pendingImagePools) + 1,
-        }),
-      });
-      // The submit buttons live in the sticky bar, so on a 150-item pack this
-      // error renders far above where the author is looking — a refusal they
-      // can't see is the same silent no-op the fix exists to remove. Put it in
-      // front of them and give it focus.
-      setRootErrorShown((shown) => shown + 1);
-      return;
-    }
-
-    const input: CreatePackInput = {
-      title: formValues.title,
-      description: formValues.description,
-      coverTone: formValues.coverTone,
-      coverImageKey: formValues.coverImageKey,
-      format: formValues.format,
-      language: formValues.language,
-      tags: formValues.tags,
-      groups: formValues.groups,
-      rounds: formValues.rounds,
-      draft,
-    };
-
-    try {
-      let targetId: string;
-      if (isEdit && packId) {
-        await packsClient.update(packId, input);
-        targetId = packId;
-      } else {
-        const pack = await packsClient.create(input);
-        targetId = pack.id;
-      }
-
-      // Every cached view of what just changed, dropped on the one action that
-      // makes them all wrong for THIS user. Once, after either branch above.
-      //
-      // The home feed holds its list for several minutes
-      // (packs-feed.queries.ts) so a visitor's hydration doesn't refetch it — a
-      // deliberate Neon-compute saving that would otherwise hide the author's
-      // own change from them, reading as a bug rather than as staleness. The
-      // pack's own fetches are the same story on a 30s timer: reopening the
-      // editor right after saving re-served the pre-save pack, and the only way
-      // out was reloading the page by hand.
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["packs-feed"] }),
-        // The authed re-fetch behind EditPackFallback / PackDetailFallback —
-        // the one an author's own draft or pending pack always goes through,
-        // since the anonymous Server fetch can't see it.
-        queryClient.invalidateQueries({
-          queryKey: ["pack-fallback", targetId],
-        }),
-        // Saving re-enters moderation, so the review banner is stale too.
-        queryClient.invalidateQueries({
-          queryKey: ["pack-review-outcome", targetId],
-        }),
-        // The author's own listing shows the title and status that just moved.
-        queryClient.invalidateQueries({ queryKey: ["my-packs"] }),
-      ]);
-
-      // TanStack isn't the only cache in play: /packs/[id] and its /edit child
-      // are Server Components, and Next serves their already-rendered RSC
-      // payload from the client router cache. Without this the editor reopens
-      // on the pre-save render however fresh the query cache is.
-      router.refresh();
-
-      // The "Saved" flash is only meaningful for the draft action — Publish
-      // navigates straight to the new/reviewed pack regardless. The
-      // auto-revert timer is the effect above, keyed on `justSaved`.
-      if (draft) setJustSaved(true);
-      router.push(`/packs/${targetId}`);
-    } catch (err) {
-      setError("root", { message: messageFromError(err) });
-    }
-  }
+  useRoundFamilySync(format, getValues, setValue);
 
   if (status === "loading") return null;
 
@@ -394,7 +170,7 @@ export function CreatePackForm({
     <FormProvider {...methods}>
       <PendingImageDraftsProvider value={pendingImageDrafts}>
         <form
-          onSubmit={handleSubmit((values) => onValid(values, false))}
+          onSubmit={handleSubmit((formValues) => save(formValues, false))}
           // A browser implicitly submits a form when Enter is pressed in a
           // single-line field, and this form's submit PUBLISHES — or sends a
           // draft to moderation. Typing a title and pressing Enter out of habit
@@ -413,154 +189,17 @@ export function CreatePackForm({
           }}
           noValidate
         >
-          {/* Sticky action bar: icon back-button + live title/draft-status on
-            the start side, Save draft + the single submit button on the end
-            side — at every breakpoint (D2 in the previous design: two
-            same-named Publish controls would break e2e strict-mode
-            `getByRole` lookups; consolidating to ONE control here, always
-            visible, is what keeps that guarantee now that the aside panel
-            no longer has its own CTA — see CreateChecklistPanel).
-            Background/border are edge-to-edge like PackDetailScreen's own
-            sticky bar, but the CONTENT row is not run through the page
-            container — the mock's own header (`padding:13px 30px`, no width
-            cap) spans the full bar, not just the 1320px page column. */}
-          <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-            <div className="flex items-center gap-3 px-7 py-3 max-[720px]:px-4">
-              {/* Boxed back button matching PlayChrome's / the pack surfaces'
-                own sticky-bar precedent (38x38, bordered tile) — this was
-                bare (no border, no background) before. */}
-              <Link
-                href={cancelHref}
-                aria-label={t("cancel")}
-                className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-tile border border-border bg-white/[0.03] text-foreground-secondary transition-colors hover:border-white/[0.18] hover:text-foreground"
-              >
-                <ArrowLeft size={18} aria-hidden />
-              </Link>
-              <div className="flex min-w-0 flex-col">
-                <Text
-                  as="span"
-                  className="truncate text-[14px] font-semibold leading-tight"
-                >
-                  {barTitle}
-                </Text>
-                {draftNote && (
-                  <Text
-                    variant="tertiary"
-                    role="status"
-                    className="truncate text-[11.5px] leading-tight"
-                  >
-                    {draftNote}
-                  </Text>
-                )}
-              </div>
-              <div className="ms-auto flex items-center gap-2.5">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  loading={isSubmitting && submitMode === "draft"}
-                  disabled={coverUploading || isSubmitting}
-                  onClick={() => {
-                    setSubmitMode("draft");
-                    void handleSubmit((values) => onValid(values, true))();
-                  }}
-                  // Mock: this button's own color communicates draft state
-                  // (amber = unsaved changes, green = just saved), not just its
-                  // label — a plain gray secondary button said the same thing
-                  // twice as quietly as it should. `!` (Tailwind's importance
-                  // modifier) is required, not decorative: `cn()` is a plain
-                  // join, not tailwind-merge, so this className is appended
-                  // after (not instead of) variant="secondary"'s own
-                  // `bg-white/[0.09] text-foreground` — without `!`, those win
-                  // the cascade regardless of source order (see Text.tsx's
-                  // identical documented gotcha; confirmed here the same way,
-                  // via getComputedStyle before adding `!`).
-                  className={
-                    justSaved
-                      ? "!border !border-[#39d98a]/45 !bg-[#39d98a]/[0.16] !text-[#7ee7b4] hover:!bg-[#39d98a]/[0.16]"
-                      : "!border !border-[#ffc24b]/35 !bg-[#ffc24b]/10 !text-[#ffd27a] hover:!bg-[#ffc24b]/10"
-                  }
-                >
-                  {!(isSubmitting && submitMode === "draft") && (
-                    <svg
-                      aria-hidden
-                      width="15"
-                      height="15"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.9"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M5 4h11l3 3v13H5z" />
-                      <path d="M8 4v5h7M8 19v-6h8v6" />
-                    </svg>
-                  )}
-                  {isSubmitting && submitMode === "draft"
-                    ? t("savingDraft")
-                    : justSaved
-                      ? t("bar.saved")
-                      : t("saveDraft")}
-                </Button>
-                <Button
-                  type="submit"
-                  size="sm"
-                  loading={isSubmitting && submitMode === "publish"}
-                  disabled={coverUploading || isSubmitting}
-                  onClick={() => setSubmitMode("publish")}
-                  // The blocked-state copy stays a title/tooltip rather than
-                  // replacing the button's label — swapping label text on
-                  // disable would break the stable accessible-name e2e
-                  // selectors below.
-                  title={blocked ? t("bar.blockedTooltip") : undefined}
-                  // Display-only gate (never native `disabled`): a blocked
-                  // click still submits and surfaces the real per-field zod
-                  // errors instead of dead-ending, matching the JoinRoomCard
-                  // anon-gate precedent this mirrors from the old preview CTA.
-                  aria-disabled={blocked ? "true" : undefined}
-                  // Pins the accessible name to the FULL label regardless of
-                  // which of the two spans below CSS currently shows — see the
-                  // comment on them.
-                  aria-label={
-                    !isEdit && !(isSubmitting && submitMode === "publish")
-                      ? t("bar.submit")
-                      : undefined
-                  }
-                  // Visual echo of aria-disabled — the button stays natively
-                  // enabled (see above), so this is cosmetic only.
-                  className={blocked ? "opacity-70" : undefined}
-                >
-                  {isEdit ? (
-                    isSubmitting ? (
-                      t("saving")
-                    ) : (
-                      t("saveChanges")
-                    )
-                  ) : isSubmitting && submitMode === "publish" ? (
-                    t("bar.submitting")
-                  ) : (
-                    // Two spans swapped by a CSS breakpoint rather than JS, so
-                    // there's no layout-shift flash on resize. The button's
-                    // accessible name is pinned to the full label via
-                    // `aria-label` below regardless of which span is visible —
-                    // a screen reader announcing a different name depending on
-                    // viewport width would be its own bug, and it keeps every
-                    // `getByRole("button", { name: "Submit for review" })`
-                    // selector stable across breakpoints.
-                    <>
-                      <span className="max-[720px]:hidden" aria-hidden>
-                        {t("bar.submit")}
-                      </span>
-                      <span className="hidden max-[720px]:inline" aria-hidden>
-                        {t("bar.submitShort")}
-                      </span>
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div>
+          <CreatePackBar
+            isEdit={isEdit}
+            cancelHref={cancelHref}
+            title={values.title?.trim() || t("bar.newPackTitle")}
+            blocked={blocked}
+            coverUploading={coverUploading}
+            justSaved={justSaved}
+            onSaveDraft={() =>
+              void handleSubmit((formValues) => save(formValues, true))()
+            }
+          />
 
           <div className={cn(pageContainer(1320), "flex-1 pb-16 pt-8")}>
             {/* Builder column first in the DOM, live-preview aside second — the
