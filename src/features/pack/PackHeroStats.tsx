@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { getRoundsCount } from "@/src/shared/lib/pack-display";
 import { cn } from "@/src/shared/lib/cn";
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack, PackOverview } from "@/src/shared/types/pack";
 
 // Compact number formatting for the stat tiles: 1_280 -> "1.3k", 128_000 -> "128k".
 function humanize(n: number): string {
@@ -15,7 +15,7 @@ function humanize(n: number): string {
 // The plays / rounds / agreement trio shown beside the pack description,
 // mirroring the design's stat cluster (we don't track a distinct "players"
 // count, so rounds stands in for it).
-export function PackHeroStats({ pack }: { pack: Pack }) {
+export function PackHeroStats({ pack }: { pack: Pack | PackOverview }) {
   const t = useTranslations("pack");
   const rounds = getRoundsCount(pack);
   const stats = [

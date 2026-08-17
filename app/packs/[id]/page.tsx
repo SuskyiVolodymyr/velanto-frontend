@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { getPackServer } from "@/src/shared/lib/get-pack-server";
+// The overview shape, not the full pack: this page draws round CHIPS, never the
+// items behind them. See PackOverview in shared/types/pack.
+import { getPackOverviewServer } from "@/src/shared/lib/get-pack-server";
 import { getResultsServer } from "@/src/shared/lib/get-results-server";
 import { getAvailableModesServer } from "@/src/shared/lib/get-available-modes-server";
 import { PackDetailScreen } from "@/src/features/pack/PackDetailScreen";
@@ -15,7 +17,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const pack = await getPackServer(id);
+  const pack = await getPackOverviewServer(id);
   if (!pack) {
     const t = await getTranslations("pages");
     return {
@@ -45,7 +47,7 @@ export default async function PackPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const pack = await getPackServer(id);
+  const pack = await getPackOverviewServer(id);
   if (!pack) return <PackDetailFallback packId={id} />;
   const [results, availableModes] = await Promise.all([
     getResultsServer(id),

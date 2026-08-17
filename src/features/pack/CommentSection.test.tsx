@@ -782,7 +782,6 @@ describe("CommentSection", () => {
         limit: 10,
       });
       vi.mocked(commentsClient.vote).mockResolvedValue({
-        score: 4,
         likes: 6,
         dislikes: 2,
         myVote: 1,

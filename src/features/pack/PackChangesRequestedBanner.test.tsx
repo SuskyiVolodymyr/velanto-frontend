@@ -4,6 +4,7 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PackChangesRequestedBanner } from "./PackChangesRequestedBanner";
 import type { Pack } from "@/src/shared/types/pack";
 import type { User } from "@/src/shared/types/user";
+import { toOverview } from "@/src/shared/test/pack-overview";
 
 let currentUser: User | null;
 vi.mock("@/src/shared/lib/auth-context", () => ({
@@ -46,7 +47,6 @@ function pack(overrides: Partial<Pack> = {}): Pack {
       requestedById: "mod-1",
       requestedAt: "2026-07-31T10:00:00.000Z",
     },
-    score: 0,
     likes: 0,
     dislikes: 0,
     myVote: null,
@@ -60,7 +60,7 @@ beforeEach(() => {
 
 describe("PackChangesRequestedBanner", () => {
   it("points the author at the outcome page, counting what was marked", () => {
-    render(<PackChangesRequestedBanner pack={pack()} />);
+    render(<PackChangesRequestedBanner pack={toOverview(pack())} />);
 
     expect(screen.getByText("Changes were requested")).toBeInTheDocument();
     expect(screen.getByText(/2 things marked to fix/)).toBeInTheDocument();
@@ -74,14 +74,16 @@ describe("PackChangesRequestedBanner", () => {
   it("still invites the author in when nothing was marked", () => {
     render(
       <PackChangesRequestedBanner
-        pack={pack({
-          changeRequest: {
-            message: "Rewrite the description.",
-            marks: [],
-            requestedById: "mod-1",
-            requestedAt: "2026-07-31T10:00:00.000Z",
-          },
-        })}
+        pack={toOverview(
+          pack({
+            changeRequest: {
+              message: "Rewrite the description.",
+              marks: [],
+              requestedById: "mod-1",
+              requestedAt: "2026-07-31T10:00:00.000Z",
+            },
+          }),
+        )}
       />,
     );
 
@@ -94,20 +96,24 @@ describe("PackChangesRequestedBanner", () => {
   // the pack in this state.
   it("renders nothing for anyone but the author", () => {
     currentUser = asUser("someone-else");
-    const { container } = render(<PackChangesRequestedBanner pack={pack()} />);
+    const { container } = render(
+      <PackChangesRequestedBanner pack={toOverview(pack())} />,
+    );
     expect(container).toBeEmptyDOMElement();
   });
 
   it("renders nothing for a signed-out visitor", () => {
     currentUser = null;
-    const { container } = render(<PackChangesRequestedBanner pack={pack()} />);
+    const { container } = render(
+      <PackChangesRequestedBanner pack={toOverview(pack())} />,
+    );
     expect(container).toBeEmptyDOMElement();
   });
 
   it("renders nothing on a pack in any other state", () => {
     const { container } = render(
       <PackChangesRequestedBanner
-        pack={pack({ status: "pending", changeRequest: null })}
+        pack={toOverview(pack({ status: "pending", changeRequest: null }))}
       />,
     );
     expect(container).toBeEmptyDOMElement();

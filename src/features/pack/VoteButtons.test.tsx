@@ -62,7 +62,6 @@ describe("VoteButtons", () => {
   it("votes on the pack via the packs client when an arrow is clicked", async () => {
     mockAuth(true);
     mockedPacksClient.vote.mockResolvedValue({
-      score: 1,
       likes: 1,
       dislikes: 0,
       myVote: 1,

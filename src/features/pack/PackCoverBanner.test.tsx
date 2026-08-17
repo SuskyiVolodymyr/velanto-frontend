@@ -4,6 +4,7 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PackCoverBanner } from "./PackCoverBanner";
 import { HOT_PLAYS_THRESHOLD } from "@/src/features/home/hot-pack";
 import type { Pack } from "@/src/shared/types/pack";
+import { toOverview } from "@/src/shared/test/pack-overview";
 
 // The author line is a client island with its own auth-gated hover-card fetch
 // and dedicated tests; stub it so these hero-layout assertions stay focused.
@@ -33,7 +34,6 @@ const SAVE_ONE_PACK: Pack = {
   avgAgreementPercent: 0,
   status: "approved",
   rejectionReason: null,
-  score: 0,
   likes: 0,
   dislikes: 0,
   myVote: null,
@@ -41,7 +41,7 @@ const SAVE_ONE_PACK: Pack = {
 
 describe("PackCoverBanner", () => {
   it("shows the pack title and format pill", () => {
-    render(<PackCoverBanner pack={SAVE_ONE_PACK} />);
+    render(<PackCoverBanner pack={toOverview(SAVE_ONE_PACK)} />);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Best Anime Openings",
@@ -50,12 +50,12 @@ describe("PackCoverBanner", () => {
   });
 
   it("shows a HOT pill only for a pack over the plays threshold", () => {
-    render(<PackCoverBanner pack={SAVE_ONE_PACK} />);
+    render(<PackCoverBanner pack={toOverview(SAVE_ONE_PACK)} />);
     expect(screen.queryByText("HOT")).toBeNull();
 
     render(
       <PackCoverBanner
-        pack={{ ...SAVE_ONE_PACK, totalPlays: HOT_PLAYS_THRESHOLD }}
+        pack={toOverview({ ...SAVE_ONE_PACK, totalPlays: HOT_PLAYS_THRESHOLD })}
       />,
     );
     expect(screen.getByText("HOT")).toBeInTheDocument();
@@ -64,7 +64,10 @@ describe("PackCoverBanner", () => {
   it("renders the custom cover image when a coverImageKey is set", () => {
     const { container } = render(
       <PackCoverBanner
-        pack={{ ...SAVE_ONE_PACK, coverImageKey: "media/cover/hero.webp" }}
+        pack={toOverview({
+          ...SAVE_ONE_PACK,
+          coverImageKey: "media/cover/hero.webp",
+        })}
       />,
     );
 
@@ -76,12 +79,18 @@ describe("PackCoverBanner", () => {
   });
 
   it("renders no cover image (gradient only) when coverImageKey is absent", () => {
-    const { container } = render(<PackCoverBanner pack={SAVE_ONE_PACK} />);
+    const { container } = render(
+      <PackCoverBanner pack={toOverview(SAVE_ONE_PACK)} />,
+    );
     expect(container.querySelector("img")).toBeNull();
   });
 
   it("shows the format label for an nxn pack", () => {
-    render(<PackCoverBanner pack={{ ...SAVE_ONE_PACK, format: "nxn" }} />);
+    render(
+      <PackCoverBanner
+        pack={toOverview({ ...SAVE_ONE_PACK, format: "nxn" })}
+      />,
+    );
     expect(screen.getByText("NxN")).toBeInTheDocument();
   });
 });
