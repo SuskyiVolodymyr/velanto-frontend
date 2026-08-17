@@ -26,7 +26,6 @@ const PACK: Pack = {
   avgAgreementPercent: 0,
   status: "approved",
   rejectionReason: null,
-  score: 0,
   likes: 0,
   dislikes: 0,
   myVote: null,

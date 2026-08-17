@@ -46,7 +46,6 @@ function pack(
     avgAgreementPercent: 0,
     status,
     rejectionReason: null,
-    score: 0,
     likes: 0,
     dislikes: 0,
     myVote: null,

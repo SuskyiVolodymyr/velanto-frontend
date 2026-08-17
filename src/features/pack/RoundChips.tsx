@@ -1,39 +1,30 @@
 import { useTranslations } from "next-intl";
-import type { Pack } from "@/src/shared/types/pack";
-import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
+import type { PackOverview } from "@/src/shared/types/pack";
 
 // Compact overview of the pack's ordered rounds as chips, each showing the
 // round's name and how many items it draws. An unnamed round falls back to its
 // pool's name (elimination, one slot) or "Round N" (versus) — and to "Random
 // pool" when the pool is drawn at play time and so has no name to show here.
-// The drawn count comes from the shared resolveRoundDraws engine so it matches
-// play/creation.
-export function RoundChips({ pack }: { pack: Pack }) {
+//
+// Both the drawn count and the pool name arrive resolved from the API, which
+// runs the same shared draw engine play and creation do. They used to be
+// computed here from the pack's full pools, which meant downloading every item
+// in the pack to render a row of chips.
+export function RoundChips({ pack }: { pack: PackOverview }) {
   const t = useTranslations("pack");
   const rounds = pack.rounds ?? [];
-  const groups = pack.groups ?? [];
 
   if (rounds.length === 0) return null;
-
-  const groupNameById = new Map(groups.map((group) => [group.id, group.name]));
-  const resolved = resolveRoundDraws(groups, rounds);
 
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(214px,1fr))] gap-2.5">
       {rounds.map((round, index) => {
-        const drawn =
-          resolved[index]?.slots.reduce(
-            (sum, slot) => sum + slot.drawnCount,
-            0,
-          ) ?? 0;
-        const heading = t("roundHeading", { index: index + 1 });
-        const soleSlot = round.slots.length === 1 ? round.slots[0] : undefined;
-        const fallback = !soleSlot
-          ? heading
-          : soleSlot.groupMode === "random"
-            ? t("randomPoolLabel")
-            : (groupNameById.get(soleSlot.groupId ?? "") ?? heading);
-        const label = round.name?.trim() || fallback;
+        // Both fallbacks are translated strings, which is why the API sends
+        // the facts (name, poolName, randomPool) and not a finished label.
+        const fallback = round.randomPool
+          ? t("randomPoolLabel")
+          : t("roundHeading", { index: index + 1 });
+        const label = round.name?.trim() || round.poolName || fallback;
 
         return (
           <div
@@ -48,7 +39,7 @@ export function RoundChips({ pack }: { pack: Pack }) {
                 {label}
               </span>
               <span className="text-[11px] text-foreground-tertiary">
-                {t("itemsCount", { count: drawn })}
+                {t("itemsCount", { count: round.itemsCount })}
               </span>
             </div>
           </div>

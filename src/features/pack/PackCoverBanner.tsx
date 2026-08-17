@@ -2,12 +2,12 @@ import { useTranslations } from "next-intl";
 import { CoverImage } from "@/src/shared/components/CoverImage";
 import { isHotPack } from "@/src/features/home/hot-pack";
 import { PackBannerAuthor } from "./PackBannerAuthor";
-import type { Pack } from "@/src/shared/types/pack";
+import type { PackOverview } from "@/src/shared/types/pack";
 
 // Hero banner for the pack page: a tinted gradient fading to near-black, with
 // the format pill (+ a derived HOT pill) and the title/author overlaid along the
 // bottom (per the 2.0.0 design). A custom cover image renders beneath the scrim.
-export function PackCoverBanner({ pack }: { pack: Pack }) {
+export function PackCoverBanner({ pack }: { pack: PackOverview }) {
   const tFormat = useTranslations("formats");
   const tHome = useTranslations("home.card");
 

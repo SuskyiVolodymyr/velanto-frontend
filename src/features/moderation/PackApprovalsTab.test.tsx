@@ -52,7 +52,6 @@ function pack(overrides: Partial<Pack> = {}): Pack {
     avgAgreementPercent: 0,
     status: "pending",
     rejectionReason: null,
-    score: 0,
     likes: 0,
     dislikes: 0,
     myVote: null,
