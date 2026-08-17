@@ -1,4 +1,4 @@
-import type { Pack, PackFormat } from "@/src/shared/types/pack";
+import type { Pack, PackFormat, PackOverview } from "@/src/shared/types/pack";
 
 // Staff-facing English labels for the moderation/admin tables, which are not
 // localized. (Player-facing surfaces use the `formats` i18n namespace instead.)
@@ -25,7 +25,7 @@ export function formatLabel(format: PackFormat): string {
   return Object.hasOwn(FORMAT_LABELS, format) ? FORMAT_LABELS[format] : format;
 }
 
-export function getRoundsCount(pack: Pack): number {
+export function getRoundsCount(pack: Pack | PackOverview): number {
   // Every format now stores its rounds uniformly as `rounds` (pools-and-rounds),
   // so the round count is simply that array's length. Guard against a missing
   // array so a malformed/partial pack can't crash a list card's render.

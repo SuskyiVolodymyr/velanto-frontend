@@ -21,6 +21,8 @@ function imageItem(id: string, title: string, key: string) {
   return { id, type: "image", title, value: key };
 }
 
+type MockSlot = { groupId?: string; mode: string; itemIds?: string[] };
+
 const BASE_PACK = {
   coverTone: "#2b2a3a",
   tags: ["Anime"],
@@ -30,7 +32,6 @@ const BASE_PACK = {
   avgAgreementPercent: 0,
   status: "approved",
   rejectionReason: null,
-  score: 0,
   likes: 0,
   dislikes: 0,
   myVote: null,
@@ -198,6 +199,46 @@ export function startMockBackend(port = 3001): Promise<Server> {
         return;
       }
       json(res, 200, [{ mode: "claim", available: true, maxPlayers: 4 }]);
+      return;
+    }
+    // The public pack page fetches the overview shape: no `groups`, and rounds
+    // collapsed to chips. Derived from the same fixture so the two responses
+    // can't disagree about a pack.
+    if (
+      req.method === "GET" &&
+      (match = /^\/packs\/([^/?]+)\/overview$/.exec(url))
+    ) {
+      const pack = PACKS[match[1]];
+      if (!pack) {
+        json(res, 404, { message: "Not found" });
+        return;
+      }
+      const { groups, rounds, ...rest } = pack as {
+        groups: { id: string; name: string }[];
+        rounds: { id: string; slots: MockSlot[] }[];
+      } & Record<string, unknown>;
+      json(res, 200, {
+        ...rest,
+        rounds: rounds.map((round) => {
+          const soleSlot =
+            round.slots.length === 1 ? round.slots[0] : undefined;
+          return {
+            id: round.id,
+            name: null,
+            poolName:
+              soleSlot?.groupId === undefined
+                ? null
+                : (groups.find((g: { id: string }) => g.id === soleSlot.groupId)
+                    ?.name ?? null),
+            randomPool: false,
+            itemsCount: round.slots.reduce(
+              (sum: number, slot: MockSlot) =>
+                sum + (slot.itemIds?.length ?? 0),
+              0,
+            ),
+          };
+        }),
+      });
       return;
     }
     if (req.method === "GET" && (match = /^\/packs\/([^/?]+)$/.exec(url))) {

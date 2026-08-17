@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { PencilLine } from "lucide-react";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
-import type { Pack } from "@/src/shared/types/pack";
+import type { PackOverview } from "@/src/shared/types/pack";
 
 /**
  * The pack page's second entry point into the review outcome (the first is the
@@ -18,7 +18,7 @@ import type { Pack } from "@/src/shared/types/pack";
  * items live on the outcome page rather than here: a pack page that opened
  * with a list of demands would bury the pack itself.
  */
-export function PackChangesRequestedBanner({ pack }: { pack: Pack }) {
+export function PackChangesRequestedBanner({ pack }: { pack: PackOverview }) {
   const t = useTranslations("pack");
   const { user } = useAuth();
 

@@ -114,7 +114,17 @@ test.describe("Play a pack", () => {
     await page.getByRole("button", { name: "See results" }).click();
 
     // It reaches the result page…
-    await expect(page).toHaveURL(/\/packs\/pack-save\/result/);
+    //
+    // Explicit timeout, well above the 5s default: this is the ONLY test in the
+    // suite that navigates to /packs/[id]/result — the signed-in cases above
+    // stop at `recordBody` and never leave /play — so it always pays that
+    // route's first `next dev` compile, and Next holds the URL until the RSC
+    // payload arrives. Measured 3466ms cold vs 282ms warm on an idle machine,
+    // which put the default right on a cliff: green when warm, red under
+    // parallel workers, and long misread as a flake.
+    await expect(page).toHaveURL(/\/packs\/pack-save\/result/, {
+      timeout: 30_000,
+    });
     // …and the play was recorded on the backend, with no auth of its own.
     expect(recorded).toBe(true);
   });

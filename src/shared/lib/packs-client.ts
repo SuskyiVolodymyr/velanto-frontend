@@ -3,6 +3,7 @@ import type {
   ChangeRequestMark,
   Pack,
   PackFormat,
+  PackOverview,
   PackStatus,
   PackSummary,
   PackTag,
@@ -65,9 +66,12 @@ export interface ModerationQueueFilters {
   limit?: number;
 }
 
-/** `T` defaults to `Pack` for endpoints that still return full packs (e.g.
- * the moderation queue); `packsClient.list` uses `PackSummary`. */
-export interface PackList<T = Pack> {
+/**
+ * The list envelope. `T` defaults to `PackSummary` because no pack endpoint
+ * returns a page of FULL packs any more — the moderation queue was the last
+ * one, and it now serves card summaries like every other list.
+ */
+export interface PackList<T = PackSummary> {
   items: T[];
   total: number;
   page: number;
@@ -75,10 +79,29 @@ export interface PackList<T = Pack> {
 }
 
 export interface VoteResult {
-  score: number;
   likes: number;
   dislikes: number;
   myVote: 1 | -1 | null;
+}
+
+/**
+ * What every write that moves a pack through moderation answers with — create,
+ * update, submit, approve, reject and request-changes.
+ *
+ * Deliberately tiny, and this client barely reads it: `create` takes `id` to
+ * navigate to the new pack, and the rest discard the body entirely. A decision
+ * removes a row from the queue, and only the server knows which row slides up
+ * to replace it, so they invalidate and refetch rather than patch the cache.
+ * The shape exists for the API's other consumer, the MCP server, which shows
+ * the outcome to an agent — hence `title`, so it can name the pack it acted on.
+ *
+ * All six used to return the whole `Pack`, content included — which on create
+ * and update meant the server echoing back what we had just sent it.
+ */
+export interface PackWriteOutcome {
+  id: string;
+  title: string;
+  status: PackStatus;
 }
 
 function buildListQuery(filters: ListPacksFilters): string {
@@ -102,25 +125,43 @@ function buildListQuery(filters: ListPacksFilters): string {
 }
 
 export const packsClient = {
-  create: (input: CreatePackInput) => apiClient.post<Pack>("/packs", input),
+  // These three answer with PackWriteOutcome, not the pack: we just SENT the
+  // content, so the only new fact is where moderation put it.
+  create: (input: CreatePackInput) =>
+    apiClient.post<PackWriteOutcome>("/packs", input),
   update: (id: string, input: CreatePackInput) =>
-    apiClient.patch<Pack>(`/packs/${id}`, input),
+    apiClient.patch<PackWriteOutcome>(`/packs/${id}`, input),
   /** Publish a draft (author-only). A dedicated endpoint rather than a PATCH:
    *  update is a full replacement, so submitting through it would mean
    *  re-sending the whole pack just to change its status. */
-  submit: (id: string) => apiClient.post<Pack>(`/packs/${id}/submit`),
+  submit: (id: string) =>
+    apiClient.post<PackWriteOutcome>(`/packs/${id}/submit`),
   getById: (id: string) => apiClient.get<Pack>(`/packs/${id}`),
+  // The pack page's shape: no `groups`, rounds collapsed to chips. Use getById
+  // for anything that plays, edits or reviews a pack — see PackOverview.
+  getOverview: (id: string) =>
+    apiClient.get<PackOverview>(`/packs/${id}/overview`),
   list: (filters: ListPacksFilters = {}) =>
     apiClient.get<PackList<PackSummary>>(`/packs${buildListQuery(filters)}`),
   delete: (id: string) => apiClient.delete<{ deleted: true }>(`/packs/${id}`),
   vote: (id: string, value: 1 | -1) =>
     apiClient.post<VoteResult>(`/packs/${id}/vote`, { value }),
   unvote: (id: string) => apiClient.delete<VoteResult>(`/packs/${id}/vote`),
+  /**
+   * The pending backlog, as CARD summaries — not full packs.
+   *
+   * The queue table draws a title, an author, a format and a submission date;
+   * opening a row navigates to the review screen, which fetches that pack by
+   * id. This used to be typed (and served) as full `Pack`s, so every queued row
+   * carried its entire content — every pool, round and item — to render four
+   * columns.
+   */
   moderationQueue: (filters: ModerationQueueFilters = {}) =>
-    apiClient.get<PackList>(
+    apiClient.get<PackList<PackSummary>>(
       `/packs/moderation-queue${buildListQuery(filters)}`,
     ),
-  approve: (id: string) => apiClient.post<Pack>(`/packs/${id}/approve`),
+  approve: (id: string) =>
+    apiClient.post<PackWriteOutcome>(`/packs/${id}/approve`),
   /**
    * The third review outcome: hand the pack back to its author with a list of
    * what has to change. `message` is required (a bare list of marks explains
@@ -129,7 +170,7 @@ export const packsClient = {
   requestChanges: (
     id: string,
     body: { message: string; marks: ChangeRequestMark[] },
-  ) => apiClient.post<Pack>(`/packs/${id}/request-changes`, body),
+  ) => apiClient.post<PackWriteOutcome>(`/packs/${id}/request-changes`, body),
   reject: (id: string, reason?: string) =>
-    apiClient.post<Pack>(`/packs/${id}/reject`, { reason }),
+    apiClient.post<PackWriteOutcome>(`/packs/${id}/reject`, { reason }),
 };

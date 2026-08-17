@@ -6,15 +6,15 @@ import { packsClient } from "@/src/shared/lib/packs-client";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { friendsRoomsClient } from "@/src/features/friends-rooms/friends-rooms-client";
 import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack, PackOverview } from "@/src/shared/types/pack";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
-export type PackFallbackState =
+export type PackFallbackState<T extends Pack | PackOverview = Pack> =
   | { status: "loading" }
   | { status: "notfound" }
   | {
       status: "ready";
-      pack: Pack;
+      pack: T;
       results: PackResults | RankResults | null;
       /** Only populated when `opts.needsAvailableModes` was set; null otherwise. */
       availableModes: AvailableMode[] | null;
@@ -32,11 +32,21 @@ export type PackFallbackState =
  * here is definitive — the anonymous SSR fetch already returned null, so a
  * failed authed retry means not-found, not a transient blip worth retrying.
  */
-export function usePackFallback(
+export function usePackFallback<T extends Pack | PackOverview = Pack>(
   packId: string,
-  opts: { needsResults: boolean; needsAvailableModes?: boolean },
-): PackFallbackState {
-  const { needsResults, needsAvailableModes = false } = opts;
+  opts: {
+    needsResults: boolean;
+    needsAvailableModes?: boolean;
+    /**
+     * How to fetch the pack. Defaults to the full pack; the public detail page
+     * passes `packsClient.getOverview` instead, since it draws round chips and
+     * never the items behind them. Part of the query key — the two shapes must
+     * not share a cache entry.
+     */
+    fetchPack?: (id: string) => Promise<T>;
+  },
+): PackFallbackState<T> {
+  const { needsResults, needsAvailableModes = false, fetchPack } = opts;
   const { status: authStatus } = useAuth();
 
   const { data, isError } = useQuery({
@@ -45,10 +55,13 @@ export function usePackFallback(
       packId,
       needsResults,
       needsAvailableModes,
+      fetchPack ? "overview" : "full",
     ] as const,
     queryFn: async () => {
       const [pack, results, availableModes] = await Promise.all([
-        packsClient.getById(packId),
+        fetchPack
+          ? fetchPack(packId)
+          : (packsClient.getById(packId) as Promise<T>),
         needsResults ? playsClient.getResults(packId) : Promise.resolve(null),
         needsAvailableModes
           ? friendsRoomsClient.availableModes(packId)

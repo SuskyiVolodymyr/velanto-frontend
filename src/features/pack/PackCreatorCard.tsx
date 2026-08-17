@@ -8,7 +8,7 @@ import { Hidden } from "@/src/shared/components/Hidden";
 import { Username } from "@/src/shared/components/Username";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { AuthorHoverTrigger } from "./AuthorHoverTrigger";
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack, PackOverview } from "@/src/shared/types/pack";
 
 // Deterministic dd-mm-yyyy (see format-date.ts) so the server and the client
 // fallback render identical markup and don't trip a hydration mismatch.
@@ -24,7 +24,7 @@ function formatPublished(iso: string): string {
  * strip degrades to a plain "view author" link; in streamer mode the hover card
  * is suppressed and the handle redacted, leaving just the link.
  */
-export function PackCreatorCard({ pack }: { pack: Pack }) {
+export function PackCreatorCard({ pack }: { pack: Pack | PackOverview }) {
   const t = useTranslations("pack");
   // The true publish moment, falling back to createdAt for drafts and legacy
   // packs the backend sends with a null firstPublishedAt.

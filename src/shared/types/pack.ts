@@ -226,20 +226,90 @@ export interface Pack {
   avgAgreementPercent: number;
   status: PackStatus;
   rejectionReason: string | null;
-  score: number;
+  // No `score`. The API used to send likes − dislikes on every voted entity;
+  // only the feedback board's rank badge ever drew one, and it keeps its own.
+  // Pack UI renders the two counts (see VoteControl).
   likes: number;
   dislikes: number;
   myVote: 1 | -1 | null;
 }
 
 /**
- * The list/feed shape: everything a card renders, minus `groups`/`rounds` (a
- * pack's entire content — every pool, round and item). That content is ~95%
- * of a pack's payload and unused by any list view, so the backend's list
- * endpoint (GET /packs, via packsClient.list) never sends it — only
- * GET /packs/:id (a single pack) does, returning the full {@link Pack}.
+ * One round as the pack PAGE draws it — a chip, not a round.
+ *
+ * `itemsCount` is resolved by the API's draw engine, not derivable here: a
+ * random slot's size depends on what manual slots reserved out of the shared
+ * pool, which needs every pool's item ids — the very thing `PackOverview`
+ * exists to avoid downloading.
  */
-export type PackSummary = Omit<Pack, "groups" | "rounds">;
+export interface PackRoundSummary {
+  /** The author's round label, or null when they left it blank. */
+  name: string | null;
+  /**
+   * The pool the round draws from, when it draws from exactly one NAMED pool.
+   * Null for a multi-slot (versus) round and for a random-pool slot — both fall
+   * back to a translated label here.
+   */
+  poolName: string | null;
+  /**
+   * True when the round is a single slot whose pool is picked at play time.
+   * Labelled "Random pool" — without this it would be indistinguishable from a
+   * versus round, which labels itself "Round N".
+   */
+  randomPool: boolean;
+  itemsCount: number;
+  id: string;
+}
+
+/**
+ * `GET /packs/{id}/overview` — what the public pack PAGE renders.
+ *
+ * A full {@link Pack} minus `groups` (every pool, round and item, ~95% of the
+ * response and nothing this page draws), with `rounds` collapsed to
+ * {@link PackRoundSummary} chips.
+ *
+ * Only this page and its OG image use it. Play, edit, the results screens and
+ * the moderation review screen all still fetch the full pack — they need the
+ * items. Reach for `Pack | PackOverview` on a component both sides render.
+ */
+export interface PackOverview extends Omit<Pack, "groups" | "rounds"> {
+  rounds: PackRoundSummary[];
+}
+
+/**
+ * The list/feed shape: exactly what a card renders, and nothing else.
+ *
+ * Two groups of fields are absent, for different reasons.
+ *
+ * `groups`/`rounds` are a pack's entire content — every pool, round and item —
+ * which is ~95% of a pack's payload and unused by any list view.
+ *
+ * `language`, `avgAgreementPercent`, `rejectionReason` and the four vote fields
+ * (`likes`/`dislikes`/`myVote`) were removed once it turned out no card
+ * read them: every consumer of all seven works from a single pack instead. On
+ * the backend they were not free — populating the vote figures cost a grouped
+ * count on every list request plus a per-viewer lookup for every signed-in
+ * caller.
+ *
+ * The 2.0.0 mock does put a like count on the browse card (the heart badge on
+ * the cover), and it is simply not built yet. When it is, add `likes` back here
+ * and to the backend's `PublicPackSummary` — deliberately just that one field,
+ * not the whole aggregate.
+ *
+ * Derived by subtraction rather than written out, so a new field on {@link Pack}
+ * lands here too and has to be excluded on purpose.
+ */
+export type PackSummary = Omit<
+  Pack,
+  | "groups"
+  | "rounds"
+  | "language"
+  | "avgAgreementPercent"
+  | "rejectionReason"
+  | "likes"
+  | "dislikes"
+  | "myVote"
+>;
 
 /**
  * A played pack as `/users/:id/recently-played` returns it: the same card

@@ -5,6 +5,7 @@ import { PackDetailScreen } from "./PackDetailScreen";
 import type { Pack } from "@/src/shared/types/pack";
 import type { PackResults } from "@/src/shared/types/play-results";
 import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
+import { toOverview } from "@/src/shared/test/pack-overview";
 
 vi.mock("@/src/features/pack/VoteButtons", () => ({
   VoteButtons: () => <div>VoteButtons</div>,
@@ -96,7 +97,6 @@ const BASE_PACK: Pack = {
   avgAgreementPercent: 0,
   status: "approved",
   rejectionReason: null,
-  score: 0,
   likes: 3,
   dislikes: 1,
   myVote: null,
@@ -128,7 +128,7 @@ describe("PackDetailScreen", () => {
   it("renders the room entry now that rooms are live", () => {
     render(
       <PackDetailScreen
-        pack={BASE_PACK}
+        pack={toOverview(BASE_PACK)}
         results={RESULTS}
         availableModes={AVAILABLE_MODES}
       />,
@@ -141,7 +141,7 @@ describe("PackDetailScreen", () => {
   it("renders the pack's title, description, and a Play link", () => {
     render(
       <PackDetailScreen
-        pack={BASE_PACK}
+        pack={toOverview(BASE_PACK)}
         results={RESULTS}
         availableModes={AVAILABLE_MODES}
       />,
@@ -159,7 +159,7 @@ describe("PackDetailScreen", () => {
   it("lists each round as a chip, falling back to the group name when unnamed", () => {
     render(
       <PackDetailScreen
-        pack={BASE_PACK}
+        pack={toOverview(BASE_PACK)}
         results={RESULTS}
         availableModes={AVAILABLE_MODES}
       />,
@@ -183,7 +183,7 @@ describe("PackDetailScreen", () => {
     };
     render(
       <PackDetailScreen
-        pack={named}
+        pack={toOverview(named)}
         results={RESULTS}
         availableModes={AVAILABLE_MODES}
       />,
@@ -216,7 +216,7 @@ describe("PackDetailScreen", () => {
     };
     render(
       <PackDetailScreen
-        pack={nxnPack}
+        pack={toOverview(nxnPack)}
         results={RESULTS}
         availableModes={AVAILABLE_MODES}
       />,
@@ -234,7 +234,7 @@ describe("PackDetailScreen", () => {
   it("ranks the items of an elimination pack instead of the per-round stats", () => {
     render(
       <PackDetailScreen
-        pack={BASE_PACK}
+        pack={toOverview(BASE_PACK)}
         results={{
           ...RESULTS,
           topItems: [
@@ -260,7 +260,7 @@ describe("PackDetailScreen", () => {
   it("names the ranking for what a sacrifice_one player actually did", () => {
     render(
       <PackDetailScreen
-        pack={{ ...BASE_PACK, format: "sacrifice_one" }}
+        pack={toOverview({ ...BASE_PACK, format: "sacrifice_one" })}
         results={{
           ...RESULTS,
           format: "sacrifice_one",
@@ -288,7 +288,7 @@ describe("PackDetailScreen", () => {
   it("ranks a rank_blind pack by its podium finishes", () => {
     render(
       <PackDetailScreen
-        pack={{ ...BASE_PACK, format: "rank_blind" }}
+        pack={toOverview({ ...BASE_PACK, format: "rank_blind" })}
         results={{
           packId: "p1",
           format: "rank_blind",
@@ -321,7 +321,7 @@ describe("PackDetailScreen", () => {
   it("falls back to the per-round stats until a rank_blind pack has a podium", () => {
     render(
       <PackDetailScreen
-        pack={{ ...BASE_PACK, format: "rank_blind" }}
+        pack={toOverview({ ...BASE_PACK, format: "rank_blind" })}
         results={{
           packId: "p1",
           format: "rank_blind",
@@ -342,7 +342,7 @@ describe("PackDetailScreen", () => {
   it("labels a random-pool round on its chip", () => {
     render(
       <PackDetailScreen
-        pack={{
+        pack={toOverview({
           ...BASE_PACK,
           rounds: [
             {
@@ -350,7 +350,7 @@ describe("PackDetailScreen", () => {
               slots: [{ groupMode: "random", mode: "random", count: 2 }],
             },
           ],
-        }}
+        })}
         results={RESULTS}
         availableModes={AVAILABLE_MODES}
       />,
@@ -362,7 +362,7 @@ describe("PackDetailScreen", () => {
   it("wires the owner/moderator actions to this pack", () => {
     render(
       <PackDetailScreen
-        pack={BASE_PACK}
+        pack={toOverview(BASE_PACK)}
         results={RESULTS}
         availableModes={AVAILABLE_MODES}
       />,
@@ -373,7 +373,7 @@ describe("PackDetailScreen", () => {
   it("shows a Share button for an approved pack", () => {
     render(
       <PackDetailScreen
-        pack={BASE_PACK}
+        pack={toOverview(BASE_PACK)}
         results={RESULTS}
         availableModes={AVAILABLE_MODES}
       />,
@@ -384,7 +384,7 @@ describe("PackDetailScreen", () => {
   it("hides the Share button for a non-approved pack", () => {
     render(
       <PackDetailScreen
-        pack={{ ...BASE_PACK, status: "pending" }}
+        pack={toOverview({ ...BASE_PACK, status: "pending" })}
         results={RESULTS}
         availableModes={AVAILABLE_MODES}
       />,
@@ -397,7 +397,7 @@ describe("PackDetailScreen", () => {
   it("shows the Play button for a normal pack", () => {
     render(
       <PackDetailScreen
-        pack={BASE_PACK}
+        pack={toOverview(BASE_PACK)}
         results={RESULTS}
         availableModes={AVAILABLE_MODES}
       />,

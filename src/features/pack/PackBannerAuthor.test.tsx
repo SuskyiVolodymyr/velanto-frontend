@@ -11,6 +11,7 @@ import { usersClient } from "@/src/shared/lib/users-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import type { Pack } from "@/src/shared/types/pack";
+import { toOverview } from "@/src/shared/test/pack-overview";
 
 vi.mock("@/src/shared/lib/users-client");
 vi.mock("@/src/shared/lib/packs-client");
@@ -40,7 +41,6 @@ const PACK: Pack = {
   avgAgreementPercent: 0,
   status: "approved",
   rejectionReason: null,
-  score: 0,
   likes: 0,
   dislikes: 0,
   myVote: null,
@@ -88,13 +88,13 @@ beforeEach(() => {
 
 describe("PackBannerAuthor", () => {
   it("shows the author's @handle linking to their profile", async () => {
-    renderBanner(<PackBannerAuthor pack={PACK} />);
+    renderBanner(<PackBannerAuthor pack={toOverview(PACK)} />);
     const handle = await screen.findByText("@quizmaster");
     expect(handle.closest("a")).toHaveAttribute("href", "/users/author-1");
   });
 
   it("falls back to a plain 'view author' link before the author resolves", () => {
-    renderBanner(<PackBannerAuthor pack={PACK} />);
+    renderBanner(<PackBannerAuthor pack={toOverview(PACK)} />);
     // Synchronously, before the query resolves, the handle isn't known yet.
     expect(screen.queryByText("@quizmaster")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /view author/i })).toHaveAttribute(
@@ -104,7 +104,7 @@ describe("PackBannerAuthor", () => {
   });
 
   it("reveals the shared mini profile on hover", async () => {
-    renderBanner(<PackBannerAuthor pack={PACK} />);
+    renderBanner(<PackBannerAuthor pack={toOverview(PACK)} />);
     const handle = await screen.findByText("@quizmaster");
 
     await userEvent.hover(handle);
