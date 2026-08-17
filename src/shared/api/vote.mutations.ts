@@ -3,8 +3,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/src/shared/lib/auth-context";
 
+// What every vote endpoint answers with. No net score — feedback derives its
+// own for the rank badge; nothing else displays one.
 export interface VoteTally {
-  score: number;
   likes: number;
   dislikes: number;
   myVote: 1 | -1 | null;

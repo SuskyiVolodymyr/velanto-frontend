@@ -21,25 +21,22 @@ vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
   friendsRoomsClient: { create },
 }));
 
-// No `groups`/`rounds` — PackCard takes PackSummary, the list-endpoint shape
-// (the backend never sends pack content to a card that doesn't render it).
+// PackCard takes PackSummary, the list-endpoint shape — which is now exactly
+// what a card renders. This fixture is deliberately the WHOLE type: it used to
+// carry `language`, `avgAgreementPercent`, `rejectionReason` and the four vote
+// fields, and the fact that removing them broke nothing here is what showed the
+// card never read them.
 const BASE_PACK = {
   id: "pack-a",
   title: "Best Anime Openings",
   description: "Pick your favorite each round.",
   coverTone: "#2b2a3a",
-  language: "en" as PackSummary["language"],
+  format: "save_one" as PackSummary["format"],
   tags: ["Anime"] as PackSummary["tags"],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
   totalPlays: 0,
-  avgAgreementPercent: 0,
   status: "approved" as const,
-  rejectionReason: null,
-  score: 0,
-  likes: 0,
-  dislikes: 0,
-  myVote: null,
 };
 
 describe("PackCard", () => {

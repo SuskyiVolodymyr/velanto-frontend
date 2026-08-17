@@ -57,7 +57,6 @@ const BASE: Omit<Pack, "format" | "groups" | "rounds"> = {
   avgAgreementPercent: 0,
   status: "approved",
   rejectionReason: null,
-  score: 0,
   likes: 0,
   dislikes: 0,
   myVote: null,

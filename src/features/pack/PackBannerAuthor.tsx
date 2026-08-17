@@ -6,7 +6,7 @@ import { Hidden } from "@/src/shared/components/Hidden";
 import { Username } from "@/src/shared/components/Username";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { AuthorHoverTrigger } from "./AuthorHoverTrigger";
-import type { Pack } from "@/src/shared/types/pack";
+import type { PackOverview } from "@/src/shared/types/pack";
 
 /**
  * The author line overlaid on the pack hero banner. Shows the author's @handle
@@ -14,7 +14,7 @@ import type { Pack } from "@/src/shared/types/pack";
  * shared mini-profile hover card, matching the creator strip lower on the page.
  * Until the author resolves it degrades to a plain "view author" link.
  */
-export function PackBannerAuthor({ pack }: { pack: Pack }) {
+export function PackBannerAuthor({ pack }: { pack: PackOverview }) {
   const t = useTranslations("pack");
 
   return (

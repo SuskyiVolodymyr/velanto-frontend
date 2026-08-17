@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
-import { getPackServer } from "@/src/shared/lib/get-pack-server";
+// Overview, not the full pack: this card draws a title and a cover.
+import { getPackOverviewServer } from "@/src/shared/lib/get-pack-server";
 import {
   ogImageSourceFromKey,
   OG_COVER_FIT,
@@ -38,7 +39,7 @@ export default async function Image({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const pack = await getPackServer(id).catch(() => null);
+  const pack = await getPackOverviewServer(id).catch(() => null);
   const title = (pack?.title ?? "Velanto").slice(0, TITLE_MAX);
   // Fitted to the box the card actually paints. Handing Satori the full-size
   // source made a 56KB cover into a 794KB payload it had to decode on every

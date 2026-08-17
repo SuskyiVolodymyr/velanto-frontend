@@ -27,7 +27,7 @@ import { CommentSection } from "@/src/features/pack/CommentSection";
 import { ReportPackDialog } from "@/src/features/pack/ReportPackDialog";
 import { VoteButtons } from "@/src/features/pack/VoteButtons";
 import { ShareButton } from "@/src/features/share/ShareButton";
-import { type Pack } from "@/src/shared/types/pack";
+import { type PackOverview } from "@/src/shared/types/pack";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
 
@@ -117,7 +117,7 @@ export function PackDetailScreen({
   results,
   availableModes,
 }: {
-  pack: Pack;
+  pack: PackOverview;
   results: PackResults | RankResults;
   availableModes: AvailableMode[];
 }) {
