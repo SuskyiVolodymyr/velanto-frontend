@@ -3,15 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Share2 } from "lucide-react";
-import {
-  Button,
-  type ButtonVariant,
-  type ButtonSize,
-} from "@/src/shared/components/Button";
-import { Input } from "@/src/shared/components/Input";
-import { buildShareUrl } from "@/src/shared/lib/share-url";
-import { useHorizontalClamp } from "@/src/shared/lib/use-horizontal-clamp";
-import type { RecordedPick } from "@/src/shared/types/play-results";
+import { Button, type ButtonVariant, type ButtonSize } from "@/ui/Button";
+import { Input } from "@/ui/Input";
+import { buildShareUrl } from "@/utils/share-url";
+import { useHorizontalClamp } from "@/hooks/use-horizontal-clamp";
+import type { RecordedPick } from "@/types/play-results";
 
 export function ShareButton({
   path,

@@ -1,5 +1,5 @@
-import type { PacksFeedResult } from "@/src/features/home/api/packs-feed";
-import { PACKS_FEED_PAGE_SIZE } from "@/src/features/home/api/packs-feed";
+import type { PacksFeedResult } from "@/features/home/api/packs-feed";
+import { PACKS_FEED_PAGE_SIZE } from "@/features/home/api/packs-feed";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 

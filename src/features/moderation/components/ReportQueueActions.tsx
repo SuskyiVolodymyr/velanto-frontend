@@ -1,0 +1,45 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import type { ReportStatus } from "@/types/report";
+
+interface ReportQueueActionsProps {
+  status: ReportStatus;
+  actionBusy: boolean;
+  actionError: string;
+  onReview: () => void;
+  onClose: () => void;
+}
+
+export function ReportQueueActions({
+  status,
+  actionBusy,
+  actionError,
+  onReview,
+  onClose,
+}: ReportQueueActionsProps) {
+  const t = useTranslations("moderation");
+  return (
+    <>
+      <div className="flex flex-wrap gap-2">
+        {status === "new" && (
+          <Button loading={actionBusy} onClick={onReview}>
+            {t("review")}
+          </Button>
+        )}
+        {status !== "closed" && (
+          <Button variant="secondary" loading={actionBusy} onClick={onClose}>
+            {t("markResolved")}
+          </Button>
+        )}
+      </div>
+      {actionError && (
+        <Text variant="danger" className="text-sm">
+          {actionError}
+        </Text>
+      )}
+    </>
+  );
+}

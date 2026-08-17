@@ -1,0 +1,148 @@
+"use client";
+import { formatDate, formatDateTime } from "@/utils/format-date";
+
+import { useTranslations } from "next-intl";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import { Dropdown } from "@/ui/Dropdown";
+import { LoadingState } from "@/ui/LoadingState";
+import { BAN_DURATIONS } from "@/constants/ban-durations";
+import {
+  BanReasonPicker,
+  isBanReasonValid,
+} from "@/components/BanReasonPicker";
+import { resolveBanReasonTitle } from "@/utils/ban-reason-title";
+import type { UseQueryResult } from "@tanstack/react-query";
+import type { BanHistoryPage, BanDuration } from "@/api/users-client";
+import type { RuleCategory } from "@/types/rules";
+import type { AuthorModeration } from "../hooks/use-author-moderation";
+
+/**
+ * Moderator-only block on the author screen: the inline ban form (duration +
+ * shared {@link BanReasonPicker}) and the ban-history list, whose reason ids are
+ * resolved to human titles via {@link resolveBanReasonTitle}. Rendered only when
+ * a moderator-plus viewer is on someone else's page — the gating stays with the
+ * screen so this component just renders what it's handed.
+ */
+export function AuthorModeratorPanel({
+  authorId,
+  moderation,
+  banHistoryQuery,
+  ruleCategories,
+}: {
+  authorId: string;
+  moderation: AuthorModeration;
+  banHistoryQuery: UseQueryResult<BanHistoryPage>;
+  ruleCategories: RuleCategory[];
+}) {
+  const tBanReason = useTranslations("banReason");
+  const tHeader = useTranslations("header");
+  const tBan = useTranslations("ban");
+  const {
+    showBanForm,
+    banDuration,
+    setBanDuration,
+    banReason,
+    setBanReason,
+    banActionError,
+    banSubmitting,
+    bannedUntil,
+    toggleBanForm,
+    handleBanSubmit,
+  } = moderation;
+
+  return (
+    <div className="mb-10 rounded-[15px] border border-border bg-surface p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <Text as="h2" variant="title" className="text-lg">
+          {tHeader("moderation")}
+        </Text>
+        {!bannedUntil && (
+          <Button variant="secondary" onClick={toggleBanForm}>
+            {tBan("ban")}
+          </Button>
+        )}
+      </div>
+      {bannedUntil && (
+        <Text variant="secondary" className="mb-3 text-sm">
+          {tBan("bannedUntil", {
+            date: formatDate(bannedUntil),
+          })}
+        </Text>
+      )}
+      {showBanForm && (
+        <div className="mb-4 flex flex-col gap-3 border-b border-border pb-4">
+          <div className="flex flex-wrap items-start gap-3">
+            <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
+              {tBan("duration")}
+              <Dropdown
+                value={banDuration}
+                onChange={(value) => setBanDuration(value as BanDuration)}
+                ariaLabel={tBan("durationAria")}
+                size="sm"
+                options={BAN_DURATIONS.map((d) => ({
+                  value: d.value,
+                  label: d.label,
+                }))}
+              />
+            </label>
+            <div className="min-w-[16rem] max-w-sm flex-1">
+              <BanReasonPicker
+                idPrefix={authorId}
+                value={banReason}
+                onChange={setBanReason}
+              />
+            </div>
+          </div>
+          <Button
+            variant="primary"
+            className="self-start"
+            disabled={!isBanReasonValid(banReason)}
+            loading={banSubmitting}
+            onClick={() => void handleBanSubmit()}
+          >
+            {tBan("confirm")}
+          </Button>
+          {banActionError && (
+            <Text variant="danger" className="text-xs">
+              {banActionError}
+            </Text>
+          )}
+        </div>
+      )}
+      {banHistoryQuery.isLoading && (
+        <LoadingState label={tBan("loadingHistory")} showLabel />
+      )}
+      {banHistoryQuery.error && (
+        <Text variant="danger" className="text-sm">
+          {tBan("historyError")}
+        </Text>
+      )}
+      {banHistoryQuery.data && banHistoryQuery.data.items.length === 0 && (
+        <Text variant="secondary">{tBan("noHistory")}</Text>
+      )}
+      {banHistoryQuery.data && banHistoryQuery.data.items.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {banHistoryQuery.data.items.map((entry, i) => (
+            <div key={i} className="text-sm">
+              <Text variant="tertiary" className="text-xs">
+                {formatDateTime(entry.createdAt)}
+              </Text>
+              <Text>
+                <span className="font-semibold">{entry.actorUsername}</span> ·{" "}
+                {entry.meta.duration} ·{" "}
+                <span className="text-foreground-secondary">
+                  {resolveBanReasonTitle(
+                    entry.meta.reason,
+                    ruleCategories,
+                    tBanReason("other"),
+                  ) ?? entry.meta.reason}
+                </span>
+              </Text>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

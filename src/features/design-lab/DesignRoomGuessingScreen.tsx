@@ -2,13 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { pageContainer } from "@/src/shared/lib/page-container";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
-import { usePlayFocus } from "@/src/shared/lib/play-focus-context";
-import { RoomHeader } from "@/src/features/friends-rooms/RoomHeader";
-import { GuessingPhaseScreen } from "@/src/features/friends-rooms/GuessingPhaseScreen";
-import { SpyAccusationScreen } from "@/src/features/friends-rooms/SpyAccusationScreen";
+import { pageContainer } from "@/constants/page-container";
+import { Text } from "@/ui/Text";
+import { cn } from "@/utils/cn";
+import { usePlayFocus } from "@/contexts/play-focus-context";
+import { RoomHeader } from "@/features/friends-rooms/components/RoomHeader";
+import { GuessingPhaseScreen } from "@/features/friends-rooms/components/GuessingPhaseScreen";
+import { SpyAccusationScreen } from "@/features/friends-rooms/components/SpyAccusationScreen";
 import { DesignLabBar } from "./DesignLabBar";
 import { MOCK_VIEWER_ID, mockGuessingRoom } from "./mock-room";
 import { useLabSelection } from "./use-lab-selection";

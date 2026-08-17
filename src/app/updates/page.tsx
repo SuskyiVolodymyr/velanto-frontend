@@ -1,0 +1,40 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { UpdatesScreen } from "@/features/updates/UpdatesScreen";
+import { UPDATES } from "@/features/updates/updates-data";
+import { buildOpenGraph } from "@/utils/open-graph";
+import { SITE_URL } from "@/constants/site-url";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("updates");
+  const title = t("metaTitle");
+  const description = t("metaDescription");
+  const url = `${SITE_URL}/updates`;
+  return {
+    title: { absolute: title },
+    description,
+    alternates: { canonical: url },
+    openGraph: buildOpenGraph({ title, description, url }),
+  };
+}
+
+export default async function UpdatesPage() {
+  const t = await getTranslations("updates");
+  const th = await getTranslations("header");
+  return (
+    <UpdatesScreen
+      browseLabel={th("browse")}
+      heading={t("heading")}
+      intro={t("intro")}
+      emptyLabel={t("empty")}
+      entries={UPDATES}
+      releasesHeading={t("releasesHeading")}
+      latestLabel={t("latest")}
+      showLessLabel={t("showLess")}
+      missingTitle={t("missingTitle")}
+      missingNote={t("missingNote")}
+      openSuggestionsLabel={t("openSuggestions")}
+      docsLabel={th("docs")}
+    />
+  );
+}

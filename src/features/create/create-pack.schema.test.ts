@@ -7,7 +7,7 @@ import {
   ELIMINATION_MAX_DRAW,
   NXN_SIDE_COUNT_MAX,
 } from "./create-pack.schema";
-import type { Item } from "@/src/shared/types/pack";
+import type { Item } from "@/types/pack";
 
 function textItem(title: string): Item {
   return { id: `i-${title}`, type: "text", title, value: title };

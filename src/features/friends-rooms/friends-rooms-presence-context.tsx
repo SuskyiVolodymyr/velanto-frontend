@@ -10,8 +10,8 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { friendsRoomsClient } from "./friends-rooms-client";
+import { useAuth } from "@/contexts/auth-context";
+import { friendsRoomsClient } from "./api/friends-rooms-client";
 import { ROOMS_DORMANT, type MyRoomSummary } from "./room-types";
 
 export interface FriendsRoomsPresenceValue {

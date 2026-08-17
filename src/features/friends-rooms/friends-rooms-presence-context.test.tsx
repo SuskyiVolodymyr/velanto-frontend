@@ -9,14 +9,14 @@ import type { MyRoomSummary } from "./room-types";
 const auth = vi.hoisted(() => ({
   current: { user: { id: "u1" } as { id: string } | null },
 }));
-vi.mock("@/src/shared/lib/auth-context", () => ({
+vi.mock("@/contexts/auth-context", () => ({
   useAuth: () => auth.current,
 }));
 
 vi.mock("next/navigation", () => ({ usePathname: () => "/" }));
 
 const { mine } = vi.hoisted(() => ({ mine: vi.fn() }));
-vi.mock("./friends-rooms-client", () => ({
+vi.mock("./api/friends-rooms-client", () => ({
   friendsRoomsClient: { mine },
 }));
 

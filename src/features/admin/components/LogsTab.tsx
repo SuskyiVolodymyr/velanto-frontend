@@ -1,0 +1,205 @@
+"use client";
+import { formatDateTime } from "@/utils/format-date";
+
+import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
+import { cn } from "@/utils/cn";
+import { Text } from "@/ui/Text";
+import { Input } from "@/ui/Input";
+import {
+  useDebouncedValue,
+  SEARCH_DEBOUNCE_MS,
+} from "@/hooks/use-debounced-value";
+import { Dropdown } from "@/ui/Dropdown";
+import { LoadingState } from "@/ui/LoadingState";
+import { useAdminLogs } from "@/features/admin/api/admin.queries";
+import {
+  ADMIN_PAGE_SIZE,
+  EMPTY_AUDIT_FILTERS,
+  type AuditLogFilters,
+} from "@/features/admin/api/admin";
+import { DataTable, DataTableRow } from "@/ui/DataTable";
+import { TablePagination } from "@/ui/TablePagination";
+import {
+  AUDIT_ACTIONS,
+  auditActionStyle,
+} from "@/features/admin/audit-actions";
+const COLUMNS = "150px 1.1fr 150px 1fr 1.2fr";
+
+/** Audit `meta` is an arbitrary JSON blob; render it as a compact one-liner. */
+function formatMeta(meta: unknown): string {
+  if (meta === null || meta === undefined) return "—";
+  if (typeof meta === "string") return meta;
+  return JSON.stringify(meta);
+}
+
+export function LogsTab() {
+  const t = useTranslations("admin");
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedQ = useDebouncedValue(searchInput.trim(), SEARCH_DEBOUNCE_MS);
+  const [filters, setFilters] = useState<AuditLogFilters>(EMPTY_AUDIT_FILTERS);
+  const [page, setPage] = useState(1);
+
+  // The debounced term is MERGED in rather than stored back into `filters`.
+  // useMemo keeps this object's identity stable unless the term or another
+  // filter actually changes — which is exactly what the reset-to-page-1 effect
+  // below watches, so a debounce tick that changes nothing can no longer knock
+  // the user back to page 1 after they paged forward.
+  const activeFilters = useMemo(
+    () => ({ ...filters, q: debouncedQ }),
+    [filters, debouncedQ],
+  );
+
+  // Only the free-text box is debounced; the selects and date pickers commit
+  // immediately (each changes in one discrete step, not per keystroke).
+  //
+  // Returning `prev` unchanged when the term is identical is load-bearing, not a
+  // micro-optimisation: `filters` identity is what the reset-to-page-1 effect
+  // below watches, so minting a new object on every debounce tick would knock
+  // the user back to page 1 ~300ms after they paged forward.
+
+  // Any filter change re-scopes the list, so a page number carried over from the
+  // old result set would be meaningless (and can be past the end).
+  useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
+    setPage(1);
+  }, [activeFilters]);
+
+  const logsQuery = useAdminLogs(activeFilters, page);
+  const logs = logsQuery.data?.items ?? [];
+  const total = logsQuery.data?.total ?? 0;
+
+  function patch(next: Partial<AuditLogFilters>) {
+    setFilters((prev) => ({ ...prev, ...next }));
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Sizing lives on wrapper divs: Input and Select are w-full primitives
+          and `cn` is a plain joiner, so a `flex-1`/`w-auto` className loses to
+          their own w-full and each control claims a full row. */}
+      <div className="flex flex-wrap items-center gap-2.5">
+        <div className="min-w-[200px] flex-1">
+          <Input
+            type="search"
+            aria-label={t("searchLogsAria")}
+            placeholder={t("searchLogsAria")}
+            value={searchInput}
+            onChange={(event) => setSearchInput(event.target.value)}
+          />
+        </div>
+        <div className="w-[190px]">
+          <Dropdown
+            ariaLabel={t("filterActionAria")}
+            value={filters.action}
+            onChange={(action) => patch({ action })}
+            surface="card"
+            options={[
+              { value: "", label: t("allActions") },
+              ...Object.entries(AUDIT_ACTIONS).map(([value, { labelKey }]) => ({
+                value,
+                label: t(labelKey),
+              })),
+            ]}
+          />
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Text variant="tertiary" className="text-[11.5px]">
+            {t("from")}
+          </Text>
+          <input
+            type="date"
+            aria-label={t("fromDateAria")}
+            value={filters.from}
+            onChange={(event) => patch({ from: event.target.value })}
+            className="h-11 rounded-[10px] border border-border bg-white/[0.05] px-2.5 text-[13px] text-foreground"
+          />
+          <Text variant="tertiary" className="text-[11.5px]">
+            {t("toWord")}
+          </Text>
+          <input
+            type="date"
+            aria-label={t("toDateAria")}
+            value={filters.to}
+            onChange={(event) => patch({ to: event.target.value })}
+            className="h-11 rounded-[10px] border border-border bg-white/[0.05] px-2.5 text-[13px] text-foreground"
+          />
+        </div>
+        <button
+          type="button"
+          onClick={() =>
+            patch({ sort: filters.sort === "newest" ? "oldest" : "newest" })
+          }
+          className="h-11 rounded-[10px] border border-border bg-white/[0.05] px-3.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.08]"
+        >
+          {t("sortLabel")}{" "}
+          {filters.sort === "newest"
+            ? t("sortNewestShort")
+            : t("sortOldestShort")}
+        </button>
+      </div>
+
+      {logsQuery.isLoading && (
+        <LoadingState label={t("loadingLogs")} showLabel />
+      )}
+      {logsQuery.isError && <Text variant="danger">{t("logsError")}</Text>}
+
+      {!logsQuery.isLoading && !logsQuery.isError && (
+        <>
+          <DataTable
+            columns={COLUMNS}
+            headers={[
+              t("hTime"),
+              t("hActor"),
+              t("hAction"),
+              t("hTarget"),
+              t("hDetails"),
+            ]}
+            empty={t("noLogs")}
+            isEmpty={logs.length === 0}
+          >
+            {logs.map((log) => {
+              const action = auditActionStyle(log.action);
+              return (
+                <DataTableRow key={log.id} columns={COLUMNS}>
+                  <Text
+                    variant="tertiary"
+                    className="text-[12.5px] tabular-nums"
+                  >
+                    {formatDateTime(log.createdAt)}
+                  </Text>
+                  <Text className="truncate text-[13px] font-semibold">
+                    {log.actorUsername}
+                  </Text>
+                  <span
+                    className={cn(
+                      "w-fit rounded-md px-2 py-1 text-[11.5px] font-semibold tracking-[0.03em]",
+                      action.className,
+                    )}
+                  >
+                    {t.has(action.labelKey)
+                      ? t(action.labelKey)
+                      : action.labelKey}
+                  </span>
+                  <Text variant="secondary" className="truncate text-[13px]">
+                    {log.target}
+                  </Text>
+                  <Text variant="tertiary" className="truncate text-[12.5px]">
+                    {formatMeta(log.meta)}
+                  </Text>
+                </DataTableRow>
+              );
+            })}
+          </DataTable>
+
+          <TablePagination
+            page={page}
+            total={total}
+            pageSize={ADMIN_PAGE_SIZE}
+            onPageChange={setPage}
+          />
+        </>
+      )}
+    </div>
+  );
+}

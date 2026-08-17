@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { NotificationsScreen } from "./NotificationsScreen";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { useNotifications } from "@/src/shared/components/use-notifications";
+import { useAuth } from "@/contexts/auth-context";
+import { useNotifications } from "@/components/use-notifications";
 
-vi.mock("@/src/shared/lib/auth-context");
-vi.mock("@/src/shared/components/use-notifications");
+vi.mock("@/contexts/auth-context");
+vi.mock("@/components/use-notifications");
 const replace = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ replace }) }));
 

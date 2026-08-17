@@ -1,7 +1,4 @@
-import {
-  usersClient,
-  type FollowUserPage,
-} from "@/src/shared/lib/users-client";
+import { usersClient, type FollowUserPage } from "@/api/users-client";
 
 export const PEOPLE_SEARCH_PAGE_SIZE = 20;
 

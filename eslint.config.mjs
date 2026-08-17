@@ -14,7 +14,7 @@ const eslintConfig = defineConfig([
   // so no route has to remember; this makes forgetting it a lint error rather
   // than a silent regression a human has to catch in review.
   {
-    files: ["app/**/page.tsx", "app/**/layout.tsx"],
+    files: ["src/app/**/page.tsx", "src/app/**/layout.tsx"],
     rules: {
       "no-restricted-syntax": [
         "error",
@@ -22,7 +22,7 @@ const eslintConfig = defineConfig([
           selector:
             "Property[key.name='openGraph'] > ObjectExpression, Property[key.value='openGraph'] > ObjectExpression",
           message:
-            "Build openGraph metadata with buildOpenGraph() from @/src/shared/lib/open-graph. An inline object silently disinherits app/opengraph-image.tsx and the page previews with no image (velanto-frontend#235).",
+            "Build openGraph metadata with buildOpenGraph() from @/utils/open-graph. An inline object silently disinherits src/app/opengraph-image.tsx and the page previews with no image (velanto-frontend#235).",
         },
       ],
     },

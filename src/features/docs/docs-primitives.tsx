@@ -22,6 +22,11 @@ export const H2 =
 /** Info card / format row / step: 15px radius, hairline border, surface fill. */
 export const PANEL = "rounded-[15px] border border-border bg-surface-card";
 
+/** Mock's token panels: 18px padding, 16px radius, hairline border. Shared by
+ * CreateTokenPanel and TokenList so the two stay identical. */
+export const TOKEN_PANEL_CLASS =
+  "flex flex-col gap-[13px] rounded-[16px] border border-border bg-surface-card p-[18px]";
+
 /**
  * The mock's cyan-tinted aside — used where a topic ends on a caveat the reader
  * must not skim past (publishing goes to moderation; a token acts as you).
